@@ -1,0 +1,17 @@
+[Unit]
+Description=cwd2 Frontend (Next.js standalone)
+After=network.target
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/opt/cwd2/frontend
+EnvironmentFile=/opt/cwd2/env/frontend.env
+ExecStart=/usr/bin/node /opt/cwd2/frontend/server.js
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/var/log/cwd2-frontend.log
+StandardError=append:/var/log/cwd2-frontend.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,46 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    open-in-view: false
+  flyway:
+    enabled: false  # 테스트는 Hibernate로 H2 스키마 생성, MySQL DDL과 호환성 분리
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false
+
+app:
+  upload-dir: ./test-uploads
+  storage:
+    type: local
+    s3:
+      bucket: ""
+      region: ap-northeast-2
+      public-url-base: ""
+      endpoint-override: ""
+  admin:
+    username: admin
+    password: admin
+    email: admin@example.com
+  cors:
+    allowed-origins: http://localhost:3000
+  auth:
+    secret: test-secret-32-bytes-minimum-please-ok
+    cookie-name: cwd2_admin_session
+    cookie-max-age-seconds: 86400
+    cookie-secure: false
+    cookie-same-site: Lax
+    cookie-path: /
+
+logging:
+  level:
+    com.chaeuda: INFO
+    org.hibernate.SQL: WARN

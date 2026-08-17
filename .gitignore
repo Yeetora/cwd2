@@ -1,0 +1,63 @@
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Claude Code local state =====
+.claude/
+
+# ===== IDE / Editor =====
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+.project
+.classpath
+.settings/
+
+# ===== Env / Secrets =====
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+
+# ===== Node / Next.js =====
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts.bak
+.turbo/
+
+# ===== Java / Gradle =====
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+HELP.md
+
+# ===== Logs =====
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ===== Uploads (user-generated content) =====
+backend/uploads/
+
+# ===== Sample / Test data (한국어 파일명 포함) =====
+soccer/
+
+# ===== Compiled binaries =====
+*.class
+*.jar
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# ===== Misc =====
+.cache/
+coverage/
+*.bak

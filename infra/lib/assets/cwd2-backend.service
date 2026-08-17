@@ -1,0 +1,19 @@
+[Unit]
+Description=cwd2 Backend (Spring Boot)
+After=network.target mariadb.service
+Wants=mariadb.service
+
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/opt/cwd2/backend
+EnvironmentFile=/opt/cwd2/env/backend.env
+ExecStart=/usr/bin/java -Xms256m -Xmx640m -jar /opt/cwd2/backend/app.jar
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/var/log/cwd2-backend.log
+StandardError=append:/var/log/cwd2-backend.log
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target

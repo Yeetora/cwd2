@@ -23,7 +23,7 @@ export default function TopButton() {
       type="button"
       aria-label="페이지 최상단으로"
       onClick={scrollToTop}
-      className={`fixed bottom-6 right-6 z-30 flex h-12 w-12 items-center justify-center border border-border-warm bg-surface-warm/95 backdrop-blur text-foreground shadow-[0_4px_18px_rgba(0,0,0,0.08)] transition-all duration-300 hover:bg-foreground hover:text-background md:bottom-8 md:right-8 ${
+      className={`fixed bottom-6 right-6 z-30 flex h-12 w-12 items-center justify-center border border-border-alt bg-surface-alt/95 backdrop-blur text-foreground shadow-[0_4px_18px_rgba(0,0,0,0.08)] transition-all duration-300 hover:bg-foreground hover:text-background md:bottom-8 md:right-8 ${
         visible ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
       }`}
     >

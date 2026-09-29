@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "cwd2",
-    template: "%s | cwd2",
+    default: "ARTY INTERIOR",
+    template: "%s | ARTY INTERIOR",
   },
   description: "인테리어 포트폴리오 및 시공 문의",
 };

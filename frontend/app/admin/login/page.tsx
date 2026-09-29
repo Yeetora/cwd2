@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import Image from "next/image";
+import type { Metadata } from "next";
 import LoginForm from "./LoginForm";
 
 export const metadata: Metadata = {
@@ -14,11 +14,11 @@ export default function AdminLoginPage() {
         <div className="mb-8 flex flex-col items-center">
           <Image
             src="/logo.png"
-            alt="cwd2"
-            width={1536}
-            height={1024}
+            alt="ARTY INTERIOR"
+            width={1606}
+            height={414}
             priority
-            className="h-48 w-auto"
+            className="h-[45px] w-auto"
           />
           <p className="mt-3 text-xs tracking-[0.3em] text-neutral-500">ADMIN</p>
           <h1 className="mt-2 text-2xl font-light">관리자 로그인</h1>

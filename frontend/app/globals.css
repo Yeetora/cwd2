@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  /* Cool Stone palette */
+  --background: #fafaf8;
   --foreground: #1a1a1a;
   --muted: #6b6b6b;
   --border: #e5e5e5;
   --accent: #1a1a1a;
-  --surface-warm: #f5efe5;
-  --border-warm: #e6dcc8;
+  --surface-alt: #eeece7;
+  --border-alt: #ddd8ce;
 }
 
 @theme inline {
@@ -16,8 +17,8 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-accent: var(--accent);
-  --color-surface-warm: var(--surface-warm);
-  --color-border-warm: var(--border-warm);
+  --color-surface-alt: var(--surface-alt);
+  --color-border-alt: var(--border-alt);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

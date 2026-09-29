@@ -32,11 +32,11 @@ export default function AdminTopbar({ me }: { me: AdminInfo }) {
           <Link href="/admin" className="flex items-center gap-2" aria-label="ADMIN 대시보드">
             <Image
               src="/logo.png"
-              alt="cwd2"
-              width={1536}
-              height={1024}
+              alt="ARTY INTERIOR"
+              width={1606}
+              height={414}
               priority
-              className="h-20 w-auto"
+              className="h-[22px] w-auto"
             />
             <span className="text-xs tracking-[0.2em] text-neutral-500">ADMIN</span>
           </Link>

@@ -11,16 +11,16 @@ export default async function Footer() {
   const hours = siteInfo?.businessHours ?? null;
 
   return (
-    <footer className="mt-24 bg-[linear-gradient(to_bottom,var(--background)_0%,var(--surface-warm)_40%,var(--surface-warm)_100%)]">
+    <footer className="mt-24 bg-[linear-gradient(to_bottom,var(--background)_0%,var(--surface-alt)_40%,var(--surface-alt)_100%)]">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
         <div className="grid gap-8 md:grid-cols-3">
           <div>
             <Image
               src="/logo.png"
-              alt="cwd2"
-              width={1536}
-              height={1024}
-              className="h-32 w-auto"
+              alt="ARTY INTERIOR"
+              width={1606}
+              height={414}
+              className="h-8 w-auto"
             />
           </div>
 
@@ -49,8 +49,8 @@ export default async function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 border-t border-border-warm pt-6 text-xs text-muted">
-          © {new Date().getFullYear()} cwd2. All rights reserved.
+        <div className="mt-10 border-t border-border-alt pt-6 text-xs text-muted">
+          © {new Date().getFullYear()} ARTY INTERIOR. All rights reserved.
         </div>
       </div>
     </footer>

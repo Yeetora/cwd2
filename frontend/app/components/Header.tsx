@@ -102,19 +102,19 @@ export default function Header() {
   return (
     <>
     <header
-      className={`sticky top-0 z-40 w-full bg-surface-warm/95 backdrop-blur transition-transform duration-300 ${
+      className={`sticky top-0 z-40 w-full bg-surface-alt/95 backdrop-blur transition-transform duration-300 ${
         shouldHide ? "-translate-y-full" : "translate-y-0"
       }`}
     >
       <div className="mx-auto flex h-28 max-w-7xl items-center justify-between px-4 md:h-40 md:px-8">
-        <Link href="/" className="flex items-center" aria-label="cwd2 홈으로">
+        <Link href="/" className="flex items-center" aria-label="ARTY INTERIOR 홈으로">
           <Image
             src="/logo.png"
-            alt="cwd2"
-            width={1536}
-            height={1024}
+            alt="ARTY INTERIOR"
+            width={1606}
+            height={414}
             priority
-            className="h-24 w-auto md:h-36"
+            className="h-8 w-auto md:h-[45px]"
           />
         </Link>
 
@@ -131,7 +131,7 @@ export default function Header() {
                 <div
                   className="pointer-events-none absolute left-1/2 top-full -translate-x-1/2 pt-3 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100"
                 >
-                  <div className="min-w-[160px] bg-surface-warm/95 backdrop-blur py-2 shadow-[0_6px_24px_rgba(0,0,0,0.06)]">
+                  <div className="min-w-[160px] bg-surface-alt/95 backdrop-blur py-2 shadow-[0_6px_24px_rgba(0,0,0,0.06)]">
                     {item.children.map((c) => (
                       <Link
                         key={c.href}
@@ -194,11 +194,11 @@ export default function Header() {
 
     {/* 모바일 메뉴 오버레이 — header 외부에 두어야 header transform 영향 안 받음 */}
     {open && (
-        <div className="md:hidden fixed inset-x-0 top-28 bottom-0 z-50 overflow-y-auto bg-surface-warm">
+        <div className="md:hidden fixed inset-x-0 top-28 bottom-0 z-50 overflow-y-auto bg-surface-alt">
           <nav className="flex flex-col px-4 py-6 text-base">
             {NAV_ITEMS.map((item) =>
               "children" in item ? (
-                <div key={item.label} className="border-b border-border-warm">
+                <div key={item.label} className="border-b border-border-alt">
                   <button
                     type="button"
                     className="flex w-full items-center justify-between py-4"
@@ -230,7 +230,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`border-b border-border-warm py-4 transition-colors duration-300 ${
+                  className={`border-b border-border-alt py-4 transition-colors duration-300 ${
                     isActive(pathname, item.href) ? "font-semibold" : ""
                   }`}
                 >
@@ -242,7 +242,7 @@ export default function Header() {
               href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="border-b border-border-warm py-4"
+              className="border-b border-border-alt py-4"
             >
               Instagram
             </a>

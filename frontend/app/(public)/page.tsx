@@ -20,7 +20,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-surface-warm">
+      <section className="relative overflow-hidden bg-surface-alt">
         {/* 동적 히어로 이미지: 관리자 페이지에서 업로드한 이미지가 있으면 사용. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -29,25 +29,25 @@ export default async function HomePage() {
           className="absolute inset-0 h-full w-full object-cover"
         />
         {/* 상단: 헤더(베이지)에서 이미지로 자연스럽게 페이드 */}
-        <div className="absolute inset-x-0 top-0 h-56 md:h-72 bg-gradient-to-b from-surface-warm via-surface-warm/60 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-56 md:h-72 bg-gradient-to-b from-surface-alt via-surface-alt/60 to-transparent" />
         {/* 좌측: 텍스트 가독성을 위한 옅은 베이지 스크림 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-surface-warm/50 via-surface-warm/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-surface-alt/50 via-surface-alt/10 to-transparent" />
         {/* 하단: 본문(흰색)으로 페이드 */}
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white" />
 
         <div className="relative mx-auto max-w-7xl px-4 py-32 md:px-8 md:py-56">
-          <p className="text-xs font-medium tracking-[0.3em] text-foreground/70 [text-shadow:0_1px_2px_rgba(245,239,229,0.6)]">
-            CHAEUDA BY DESIGN
+          <p className="text-xs font-medium tracking-[0.3em] text-foreground/70 [text-shadow:0_1px_2px_rgba(238,236,231,0.6)]">
+            SPACE, CRAFTED AS ART
           </p>
-          <h1 className="mt-6 text-4xl font-medium leading-tight tracking-tight text-foreground md:text-6xl [text-shadow:0_2px_8px_rgba(245,239,229,0.5)]">
-            공간에 담기는
+          <h1 className="mt-6 text-4xl font-medium leading-tight tracking-tight text-foreground md:text-6xl [text-shadow:0_2px_8px_rgba(238,236,231,0.5)]">
+            빛과 소재로
             <br />
-            절제된 감성
+            완성하는 공간
           </h1>
-          <p className="mt-8 max-w-xl text-base font-normal text-foreground/90 md:text-lg [text-shadow:0_1px_3px_rgba(245,239,229,0.5)]">
-            화려하지 않지만 세련된 공간, 디테일한 감성을 살린 디자인.
+          <p className="mt-8 max-w-xl text-base font-normal text-foreground/90 md:text-lg [text-shadow:0_1px_3px_rgba(238,236,231,0.5)]">
+            머무는 사람의 일상에서 출발해, 빛과 소재의 균형을 설계합니다.
             <br />
-            주거와 상업 공간 모두에 어울리는 인테리어를 제안합니다.
+            집부터 상업 공간까지, 오래 머물고 싶은 한 장면을 만듭니다.
           </p>
           <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4 text-sm">
             <Link

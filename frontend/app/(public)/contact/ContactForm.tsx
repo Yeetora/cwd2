@@ -49,13 +49,34 @@ export default function ContactForm({ config }: { config: PublicEstimateConfig |
 
   const areaNumber = Number(area);
   const areaValid = area !== "" && Number.isFinite(areaNumber) && areaNumber >= 1 && areaNumber <= 1000;
+  // 서버와 같이 소수 첫째 자리까지만 사용
+  const areaPyeong = Math.round(areaNumber * 10) / 10;
+
+  // 입력 중 미리 보여주는 금액 (최소 공사 금액·범위는 결과 화면에서 서버가 적용)
+  const rate = grades.find((g) => g.grade === grade)?.pricePerPyeong ?? null;
+  const baseAmount = rate != null && areaValid ? Math.round(areaPyeong * rate) : null;
+
+  function optionAmount(o: PublicEstimateOption): number {
+    switch (o.pricingType) {
+      case "PER_PYEONG":
+        return areaValid ? Math.round(areaPyeong * o.unitPrice) : 0;
+      case "PER_UNIT":
+        return o.unitPrice * (selected[o.id] ?? 1);
+      default:
+        return o.unitPrice;
+    }
+  }
+
+  const optionsTotal = options
+    .filter((o) => selected[o.id] != null)
+    .reduce((sum, o) => sum + optionAmount(o), 0);
 
   function estimateInput(): EstimateInput | null {
     if (!category || !grade || !areaValid) return null;
     return {
       category,
       grade,
-      areaPyeong: Math.round(areaNumber * 10) / 10,
+      areaPyeong,
       options: options
         .filter((o) => selected[o.id] != null)
         .map((o) =>
@@ -186,7 +207,7 @@ export default function ContactForm({ config }: { config: PublicEstimateConfig |
 
           <div>
             <Label>평수</Label>
-            <div className="mt-3 flex items-center gap-3">
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
               <input
                 type="number"
                 inputMode="decimal"
@@ -201,6 +222,14 @@ export default function ContactForm({ config }: { config: PublicEstimateConfig |
               <span className="text-sm">평</span>
               {areaValid && (
                 <span className="text-xs text-muted">≈ {(areaNumber * PYEONG_TO_M2).toFixed(1)}㎡</span>
+              )}
+              {baseAmount != null && rate != null && (
+                <span className="text-sm md:ml-4">
+                  기본 공사 <strong className="font-medium">약 {formatWon(baseAmount)}</strong>
+                  <span className="ml-1 text-xs text-muted">
+                    ({areaPyeong}평 × 평당 {formatWon(rate)})
+                  </span>
+                </span>
               )}
             </div>
             {area !== "" && !areaValid && (
@@ -242,22 +271,47 @@ export default function ContactForm({ config }: { config: PublicEstimateConfig |
                     />
                     <span className="min-w-0">
                       <span className="block text-sm">{o.name}</span>
-                      {o.description && <span className="mt-1 block text-xs text-muted">{o.description}</span>}
+                      <span className="mt-1 block text-xs text-muted">
+                        {unitPriceLabel(o)}
+                        {o.description && ` · ${o.description}`}
+                      </span>
                     </span>
                   </label>
-                  {checked && o.pricingType === "PER_UNIT" && (
-                    <div className="flex items-center border border-border text-sm">
-                      <button type="button" onClick={() => changeQuantity(o.id, -1)} className="px-3 py-1.5" aria-label="수량 줄이기">−</button>
-                      <span className="min-w-10 px-2 text-center">
-                        {selected[o.id]}{o.unitLabel ?? "개"}
-                      </span>
-                      <button type="button" onClick={() => changeQuantity(o.id, 1)} className="px-3 py-1.5" aria-label="수량 늘리기">+</button>
+                  {checked && (
+                    <div className="flex items-center gap-3">
+                      {o.pricingType === "PER_UNIT" && (
+                        <div className="flex items-center border border-border text-sm">
+                          <button type="button" onClick={() => changeQuantity(o.id, -1)} className="px-3 py-1.5" aria-label="수량 줄이기">−</button>
+                          <span className="min-w-10 px-2 text-center">
+                            {selected[o.id]}{o.unitLabel ?? "개"}
+                          </span>
+                          <button type="button" onClick={() => changeQuantity(o.id, 1)} className="px-3 py-1.5" aria-label="수량 늘리기">+</button>
+                        </div>
+                      )}
+                      <span className="min-w-20 text-right text-sm">+ {formatWon(optionAmount(o))}</span>
                     </div>
                   )}
                 </li>
               );
             })}
           </ul>
+
+          {baseAmount != null && (
+            <dl className="space-y-1 text-sm">
+              <div className="flex justify-between gap-4 text-muted">
+                <dt>기본 공사</dt>
+                <dd>{formatWon(baseAmount)}</dd>
+              </div>
+              <div className="flex justify-between gap-4 text-muted">
+                <dt>옵션</dt>
+                <dd>{optionsTotal > 0 ? `+ ${formatWon(optionsTotal)}` : "-"}</dd>
+              </div>
+              <div className="flex justify-between gap-4 border-t border-border pt-2 font-medium">
+                <dt>현재 합계</dt>
+                <dd>약 {formatWon(baseAmount + optionsTotal)}</dd>
+              </div>
+            </dl>
+          )}
 
           <ErrorText error={error} />
 
@@ -343,6 +397,17 @@ export default function ContactForm({ config }: { config: PublicEstimateConfig |
       )}
     </div>
   );
+}
+
+function unitPriceLabel(o: PublicEstimateOption) {
+  switch (o.pricingType) {
+    case "PER_PYEONG":
+      return `평당 ${formatWon(o.unitPrice)}`;
+    case "PER_UNIT":
+      return `1${o.unitLabel ?? "개"}당 ${formatWon(o.unitPrice)}`;
+    default:
+      return formatWon(o.unitPrice);
+  }
 }
 
 function resultText(r: EstimateResult) {

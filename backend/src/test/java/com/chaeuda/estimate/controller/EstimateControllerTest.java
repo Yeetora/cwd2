@@ -100,7 +100,7 @@ class EstimateControllerTest {
     }
 
     @Test
-    void public_config_lists_offered_grades_with_rate_and_hides_option_prices() throws Exception {
+    void public_config_lists_offered_grades_and_active_options_with_prices() throws Exception {
         enable("RANGE", 10, null);
         setRate("RESIDENTIAL", "STANDARD", 1_500_000L);
         long fanId = createOption("실링팬", "ALL", "PER_UNIT", 350_000L, "대", true);
@@ -116,7 +116,7 @@ class EstimateControllerTest {
                 .andExpect(jsonPath("$.categories[0].grades[0].label").value("중급"))
                 .andExpect(jsonPath("$.options", hasSize(1)))
                 .andExpect(jsonPath("$.options[0].id").value(fanId))
-                .andExpect(jsonPath("$.options[0].unitPrice").doesNotExist())
+                .andExpect(jsonPath("$.options[0].unitPrice").value(350_000))
                 .andExpect(jsonPath("$.categories[0].grades[0].pricePerPyeong").value(1_500_000));
     }
 

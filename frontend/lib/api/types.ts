@@ -92,6 +92,7 @@ export type PublicEstimateOption = {
   description: string | null;
   appliesTo: AppliesTo;
   pricingType: PricingType;
+  unitPrice: number;
   unitLabel: string | null;
 };
 
@@ -119,7 +120,6 @@ export type EstimateResult = {
 };
 
 export type EstimateOption = PublicEstimateOption & {
-  unitPrice: number;
   active: boolean;
   displayOrder: number;
 };

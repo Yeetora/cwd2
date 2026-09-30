@@ -8,7 +8,7 @@ import com.chaeuda.portfolio.domain.Category;
 
 import java.util.List;
 
-/** 고객용 설정 — 등급별 평당 단가는 고객 화면에 안내용으로 노출하고, 옵션 단가는 포함하지 않는다. */
+/** 고객용 설정 — 고객이 고르면서 금액을 볼 수 있도록 등급별 평당 단가와 옵션 단가를 포함한다. */
 public record PublicEstimateConfigResponse(
         boolean enabled,
         DisplayMode displayMode,
@@ -28,6 +28,7 @@ public record PublicEstimateConfigResponse(
             String description,
             AppliesTo appliesTo,
             PricingType pricingType,
+            long unitPrice,
             String unitLabel
     ) {
     }

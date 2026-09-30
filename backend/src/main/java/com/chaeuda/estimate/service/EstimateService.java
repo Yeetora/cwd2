@@ -87,7 +87,7 @@ public class EstimateService {
 
         List<PublicOption> options = optionRepository.findAllByActiveTrueOrderByDisplayOrderAscIdAsc().stream()
                 .map(o -> new PublicOption(o.getId(), o.getName(), o.getDescription(), o.getAppliesTo(),
-                        o.getPricingType(), o.getUnitLabel()))
+                        o.getPricingType(), o.getUnitPrice(), o.getUnitLabel()))
                 .toList();
         return new PublicEstimateConfigResponse(true, settings.getDisplayMode(), settings.getNotice(),
                 categories, options);

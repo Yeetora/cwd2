@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { adminApi } from "@/lib/api/admin";
 import { ApiError } from "@/lib/api/client";
-import { CATEGORY_LABEL, GRADE_LABEL, formatWon } from "@/lib/api/inquiry";
+import { CATEGORY_LABEL, GRADE_LABEL } from "@/lib/api/inquiry";
 import type {
   AdminEstimateConfig,
   AppliesTo,
@@ -37,10 +37,12 @@ export default function EstimateSettingsForm({ initial }: { initial: AdminEstima
   const [options, setOptions] = useState<EstimateOption[]>(initial.options);
   const hasAnyRate = initial.rates.some((r) => (r.pricePerPyeong ?? 0) > 0);
   const [ratesSet, setRatesSet] = useState(hasAnyRate);
+  const [savedEnabled, setSavedEnabled] = useState(initial.settings.enabled);
 
   return (
     <div className="space-y-8">
-      <SettingsSection initial={initial.settings} hasAnyRate={ratesSet} />
+      <VisibilityBanner enabled={savedEnabled} hasAnyRate={ratesSet} />
+      <SettingsSection initial={initial.settings} hasAnyRate={ratesSet} onSaved={setSavedEnabled} />
       <RatesSection initial={initial.rates} onSaved={(rates) => setRatesSet(rates.some((r) => (r.pricePerPyeong ?? 0) > 0))} />
       <OptionsSection options={options} setOptions={setOptions} />
     </div>
@@ -49,17 +51,37 @@ export default function EstimateSettingsForm({ initial }: { initial: AdminEstima
 
 // ── 기본 설정 ──────────────────────────────────────
 
+function VisibilityBanner({ enabled, hasAnyRate }: { enabled: boolean; hasAnyRate: boolean }) {
+  if (enabled && hasAnyRate) {
+    return (
+      <p className="border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        고객 문의하기 화면에 예상 견적이 표시되고 있습니다.
+      </p>
+    );
+  }
+  return (
+    <p className="border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      현재 고객 문의하기 화면에 예상 견적이 <strong>표시되지 않습니다.</strong>{" "}
+      {!enabled
+        ? "아래 기본 설정에서 ‘예상 견적 기능 사용’을 체크하고 저장해 주세요."
+        : "평당 단가를 하나 이상 입력하고 저장해 주세요."}
+    </p>
+  );
+}
+
 function SettingsSection({
   initial,
   hasAnyRate,
+  onSaved,
 }: {
   initial: AdminEstimateConfig["settings"];
   hasAnyRate: boolean;
+  onSaved: (enabled: boolean) => void;
 }) {
   const [enabled, setEnabled] = useState(initial.enabled);
   const [displayMode, setDisplayMode] = useState<DisplayMode>(initial.displayMode);
   const [rangePercent, setRangePercent] = useState(String(initial.rangePercent));
-  const [minimumAmount, setMinimumAmount] = useState(initial.minimumAmount != null ? String(initial.minimumAmount) : "");
+  const [minimumAmount, setMinimumAmount] = useState(wonToMan(initial.minimumAmount));
   const [notice, setNotice] = useState(initial.notice ?? "");
   const [status, setStatus] = useState<Status>(null);
 
@@ -71,9 +93,10 @@ function SettingsSection({
         enabled,
         displayMode,
         rangePercent: Number(rangePercent) || 0,
-        minimumAmount: minimumAmount.trim() === "" ? null : Number(minimumAmount),
+        minimumAmount: manToWon(minimumAmount),
         notice: notice.trim() || null,
       });
+      onSaved(enabled);
       setStatus({ msg: "기본 설정이 저장되었습니다." });
     } catch (err) {
       setStatus({ error: errorMessage(err) });
@@ -124,8 +147,8 @@ function SettingsSection({
             <p className="mt-1 text-xs text-neutral-500">계산 금액의 위아래로 이만큼 넓혀서 보여줍니다. (0~50)</p>
           </div>
           <div>
-            <FieldLabel>최소 공사 금액 (원, 선택)</FieldLabel>
-            <MoneyInput value={minimumAmount} onChange={setMinimumAmount} placeholder="예: 10000000" />
+            <FieldLabel>최소 공사 금액 (만 원, 선택)</FieldLabel>
+            <MoneyInput value={minimumAmount} onChange={setMinimumAmount} placeholder="예: 1000" />
             <p className="mt-1 text-xs text-neutral-500">계산 결과가 이보다 작으면 이 금액으로 안내합니다.</p>
           </div>
         </div>
@@ -152,7 +175,7 @@ function SettingsSection({
 
 function RatesSection({ initial, onSaved }: { initial: BaseRate[]; onSaved: (rates: BaseRate[]) => void }) {
   const [values, setValues] = useState<Record<string, string>>(() =>
-    Object.fromEntries(initial.map((r) => [key(r.category, r.grade), r.pricePerPyeong != null ? String(r.pricePerPyeong) : ""]))
+    Object.fromEntries(initial.map((r) => [key(r.category, r.grade), wonToMan(r.pricePerPyeong)]))
   );
   const [status, setStatus] = useState<Status>(null);
 
@@ -162,8 +185,7 @@ function RatesSection({ initial, onSaved }: { initial: BaseRate[]; onSaved: (rat
     try {
       const rates: BaseRate[] = CATEGORIES.flatMap((category) =>
         GRADES.map((grade) => {
-          const v = values[key(category, grade)]?.trim() ?? "";
-          return { category, grade, pricePerPyeong: v === "" ? null : Number(v) };
+          return { category, grade, pricePerPyeong: manToWon(values[key(category, grade)] ?? "") };
         })
       );
       const updated = await adminApi.updateEstimateRates(rates);
@@ -178,7 +200,7 @@ function RatesSection({ initial, onSaved }: { initial: BaseRate[]; onSaved: (rat
     <form onSubmit={onSubmit} className={sectionCls}>
       <SectionTitle
         title="평당 단가"
-        desc="기본 공사비 = 평수 × 평당 단가. 비워 두면 해당 등급은 고객 화면에 나타나지 않습니다."
+        desc="만 원 단위로 입력합니다 (예: 150 → 평당 150만 원). 기본 공사비 = 평수 × 평당 단가. 비워 두면 해당 등급은 고객 화면에 나타나지 않습니다."
       />
 
       <div className="mt-6 overflow-x-auto">
@@ -313,7 +335,7 @@ function OptionsSection({
                     <span className="text-xs text-neutral-500">{APPLIES_LABEL[o.appliesTo]}</span>
                   </div>
                   <div className="mt-1 text-xs text-neutral-500">
-                    {PRICING_LABEL[o.pricingType]} {o.unitPrice.toLocaleString("ko-KR")}원
+                    {PRICING_LABEL[o.pricingType]} {manLabel(o.unitPrice)}
                     {o.pricingType === "PER_UNIT" && ` / ${o.unitLabel ?? "개"}`}
                     {o.description && ` · ${o.description}`}
                   </div>
@@ -344,7 +366,7 @@ function OptionEditor({
   const [description, setDescription] = useState(initial.description ?? "");
   const [appliesTo, setAppliesTo] = useState<AppliesTo>(initial.appliesTo);
   const [pricingType, setPricingType] = useState<PricingType>(initial.pricingType);
-  const [unitPrice, setUnitPrice] = useState(initial.unitPrice ? String(initial.unitPrice) : "");
+  const [unitPrice, setUnitPrice] = useState(initial.unitPrice ? wonToMan(initial.unitPrice) : "");
   const [unitLabel, setUnitLabel] = useState(initial.unitLabel ?? "");
   const [active, setActive] = useState(initial.active);
   const [displayOrder, setDisplayOrder] = useState(initial.displayOrder != null ? String(initial.displayOrder) : "");
@@ -359,7 +381,7 @@ function OptionEditor({
         description: description.trim() || null,
         appliesTo,
         pricingType,
-        unitPrice: Number(unitPrice) || 0,
+        unitPrice: manToWon(unitPrice) ?? 0,
         unitLabel: pricingType === "PER_UNIT" ? unitLabel.trim() || "개" : null,
         active,
         displayOrder: displayOrder.trim() === "" ? null : Number(displayOrder),
@@ -398,7 +420,7 @@ function OptionEditor({
         </div>
         <div>
           <FieldLabel>
-            {pricingType === "PER_PYEONG" ? "평당 금액 (원) *" : pricingType === "PER_UNIT" ? "1개당 금액 (원) *" : "금액 (원) *"}
+            {pricingType === "PER_PYEONG" ? "평당 금액 (만 원) *" : pricingType === "PER_UNIT" ? "1개당 금액 (만 원) *" : "금액 (만 원) *"}
           </FieldLabel>
           <MoneyInput value={unitPrice} onChange={setUnitPrice} required />
         </div>
@@ -437,6 +459,24 @@ function OptionEditor({
 
 type Status = { busy?: boolean; msg?: string; error?: string } | null;
 
+/** 원 → 만 원 입력값 (예: 1500000 → "150", 350000 → "35", 5000 → "0.5") */
+function wonToMan(won: number | null): string {
+  if (won == null) return "";
+  return String(Math.round(won / 1_000) / 10);
+}
+
+/** 만 원 입력값 → 원 (빈 값은 null) */
+function manToWon(man: string): number | null {
+  const v = man.trim();
+  if (v === "") return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.round(n * 10_000) : null;
+}
+
+function manLabel(won: number) {
+  return `${(won / 10_000).toLocaleString("ko-KR", { maximumFractionDigits: 1 })}만 원`;
+}
+
 function key(c: Category, g: Grade) {
   return `${c}:${g}`;
 }
@@ -462,6 +502,7 @@ function FieldLabel({ children }: { children: React.ReactNode }) {
   return <label className="text-xs tracking-[0.1em] text-neutral-500">{children}</label>;
 }
 
+/** 만 원 단위 입력. 소수점 한 자리(천 원)까지 허용 */
 function MoneyInput({
   value,
   onChange,
@@ -473,24 +514,25 @@ function MoneyInput({
   placeholder?: string;
   required?: boolean;
 }) {
-  const n = Number(value);
+  const won = manToWon(value);
   return (
     <div>
-      <input
-        type="number"
-        inputMode="numeric"
-        min={0}
-        step={1000}
-        required={required}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className={`${inputCls} mt-2`}
-      />
+      <div className="mt-2 flex items-center gap-2">
+        <input
+          type="number"
+          inputMode="decimal"
+          min={0}
+          step={0.1}
+          required={required}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={inputCls}
+        />
+        <span className="shrink-0 text-sm text-neutral-600">만 원</span>
+      </div>
       <p className="mt-1 h-4 text-xs text-neutral-500">
-        {value !== "" && Number.isFinite(n) && n > 0
-          ? `${n.toLocaleString("ko-KR")}원${n >= 10_000 ? ` (${formatWon(n)})` : ""}`
-          : ""}
+        {won != null && won > 0 ? `= ${won.toLocaleString("ko-KR")}원` : ""}
       </p>
     </div>
   );

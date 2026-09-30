@@ -13,15 +13,17 @@ export const inquiryApi = {
     }),
 };
 
-/** 원 → "4,870만 원" / "1억 2,300만 원" */
+/** 원 → "4,870만 원" / "35.5만 원" / "1억 2,300만 원" / "5,000원" */
 export function formatWon(amount: number): string {
-  const man = Math.round(amount / 10_000);
+  if (amount < 10_000) return `${amount.toLocaleString("ko-KR")}원`;
+  const man = Math.round(amount / 1_000) / 10;
   const eok = Math.floor(man / 10_000);
-  const rest = man % 10_000;
+  const rest = Math.round((man - eok * 10_000) * 10) / 10;
+  const fmt = (n: number) => n.toLocaleString("ko-KR", { maximumFractionDigits: 1 });
   if (eok > 0) {
-    return rest > 0 ? `${eok}억 ${rest.toLocaleString("ko-KR")}만 원` : `${eok}억 원`;
+    return rest > 0 ? `${eok}억 ${fmt(rest)}만 원` : `${eok}억 원`;
   }
-  return `${man.toLocaleString("ko-KR")}만 원`;
+  return `${fmt(man)}만 원`;
 }
 
 export const GRADE_LABEL = { BASIC: "기본", STANDARD: "중급", PREMIUM: "고급" } as const;

@@ -72,9 +72,10 @@ public class EstimateService {
         for (Category category : Category.values()) {
             List<GradeItem> grades = new ArrayList<>();
             for (Grade grade : Grade.values()) {
-                boolean offered = rates.stream().anyMatch(r ->
-                        r.getCategory() == category && r.getGrade() == grade && r.isOffered());
-                if (offered) grades.add(new GradeItem(grade, grade.label()));
+                rates.stream()
+                        .filter(r -> r.getCategory() == category && r.getGrade() == grade && r.isOffered())
+                        .findFirst()
+                        .ifPresent(r -> grades.add(new GradeItem(grade, grade.label(), r.getPricePerPyeong())));
             }
             if (!grades.isEmpty()) categories.add(new CategoryGrades(category, grades));
         }

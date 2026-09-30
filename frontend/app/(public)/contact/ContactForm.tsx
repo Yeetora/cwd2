@@ -174,7 +174,10 @@ export default function ContactForm({ config }: { config: PublicEstimateConfig |
               <div className="mt-3 flex flex-wrap gap-2">
                 {grades.map((g) => (
                   <Choice key={g.grade} active={grade === g.grade} onClick={() => { setGrade(g.grade); setResult(null); }}>
-                    {g.label}
+                    <span className="block">{g.label}</span>
+                    <span className={`mt-0.5 block text-xs ${grade === g.grade ? "text-background/80" : "text-muted"}`}>
+                      평당 {formatWon(g.pricePerPyeong)}
+                    </span>
                   </Choice>
                 ))}
               </div>

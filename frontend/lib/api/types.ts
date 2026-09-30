@@ -99,7 +99,7 @@ export type PublicEstimateConfig = {
   enabled: boolean;
   displayMode: DisplayMode;
   notice: string | null;
-  categories: { category: Category; grades: { grade: Grade; label: string }[] }[];
+  categories: { category: Category; grades: { grade: Grade; label: string; pricePerPyeong: number }[] }[];
   options: PublicEstimateOption[];
 };
 

@@ -3,6 +3,7 @@ import type {
   PageResponse,
   PortfolioDetail,
   PortfolioListItem,
+  PublicEstimateConfig,
   SiteInfo,
 } from "./types";
 
@@ -38,4 +39,6 @@ export const publicApi = {
     getJson<AdjacentResponse>(`/api/portfolios/${id}/adjacent?category=${category}`),
 
   getSiteInfo: () => getJson<SiteInfo>(`/api/site-info`),
+
+  getEstimateConfig: () => getJson<PublicEstimateConfig>(`/api/estimate/config`),
 };

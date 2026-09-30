@@ -1,5 +1,7 @@
 package com.chaeuda.inquiry.domain;
 
+import com.chaeuda.estimate.domain.Grade;
+import com.chaeuda.portfolio.domain.Category;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -7,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
@@ -42,6 +45,30 @@ public class Inquiry {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
+
+    // ── 예상 견적 스냅샷 (견적과 함께 들어온 문의만) ──
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estimate_category")
+    private Category estimateCategory;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estimate_grade")
+    private Grade estimateGrade;
+
+    @Column(name = "estimate_area", precision = 7, scale = 1)
+    private BigDecimal estimateArea;
+
+    @Column(name = "estimate_amount")
+    private Long estimateAmount;
+
+    @Column(name = "estimate_min")
+    private Long estimateMin;
+
+    @Column(name = "estimate_max")
+    private Long estimateMax;
+
+    @Column(name = "estimate_detail", columnDefinition = "TEXT")
+    private String estimateDetail;
 
     @PrePersist
     void onCreate() {

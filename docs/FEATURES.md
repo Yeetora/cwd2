@@ -54,7 +54,18 @@
   1. DB에 저장
   2. 사장님 이메일로 알림 발송
   3. 사용자에게 완료 안내
-- 회사 위치/연락처/영업시간 정보 병행 노출
+- 회사 위치/연락처/영업시간 정보 병행 노출 (사이트 설정 값 사용)
+
+#### A-5-1. 예상 견적 (Contact 내 단계형)
+- 관리자가 견적 기능을 켰고 평당 단가가 1개 이상 설정된 경우에만 노출
+- 단계: ① 공간 유형(주거/상업)·마감 등급(기본/중급/고급)·평수 → ② 옵션 선택(관리자가 등록한 항목, 개수형은 수량 입력) → ③ 예상 견적 확인 → ④ 연락처 입력 후 상담 신청
+- 견적은 연락처 없이 먼저 확인 가능. "견적 없이 바로 문의"도 가능
+- 계산은 서버에서 수행 (단가표는 고객에게 노출하지 않음)
+  - 기본 = 평수 × 평당 단가(유형·등급별)
+  - 옵션 = 평당형(평수 × 단가) / 개수형(수량 × 단가) / 고정형(단가)
+  - 합계가 최소 공사 금액보다 작으면 최소 금액 적용, 만원 단위 반올림
+- 결과 표시 방식은 관리자 설정: 금액 범위(±%) 또는 단일 금액, 안내 문구
+- 상담 신청 시 입력값과 계산 결과를 문의에 함께 저장 (이후 단가가 바뀌어도 당시 견적 보존)
 
 ### A-6. Blog (PENDING — 1차 범위 제외)
 - 추후 별도 Phase로 도입 예정. 메뉴 노출도 보류.
@@ -90,6 +101,13 @@
 - 문의 목록 (페이지네이션)
 - 상태: 미확인 / 확인됨 / 처리완료
 - 상세 보기, 상태 변경, 삭제
+- 견적과 함께 들어온 문의는 예상 견적 금액·선택 내역 표시
+
+### B-4-1. 견적 설정 (`/admin/estimate`)
+- 기본 설정: 사용 여부, 결과 표시 방식(범위/단일), 범위 폭(±%), 최소 공사 금액, 고객 안내 문구
+- 평당 단가: 주거/상업 × 기본/중급/고급 (비워두면 해당 등급은 고객에게 미노출)
+- 옵션 항목: 이름, 설명, 적용 공간(전체/주거/상업), 계산 방식(평당/개당/고정), 단가, 단위(예: 개), 사용 여부, 표시 순서
+  - 관리자가 추가한 옵션(예: 실링팬)은 즉시 고객 견적 화면에 나타남
 
 ### B-5. Blog 관리 (PENDING)
 - 1차 범위 제외. 추후 도입.
@@ -139,6 +157,37 @@
 | content | TEXT | |
 | status | ENUM | NEW / CHECKED / DONE |
 | created_at | TIMESTAMP | |
+| estimate_category / estimate_grade | ENUM | 견적 포함 문의일 때만 |
+| estimate_area | DECIMAL(7,1) | 평수 |
+| estimate_amount / estimate_min / estimate_max | BIGINT | 신청 당시 계산 결과(원) |
+| estimate_detail | TEXT | 신청 당시 단가·옵션 내역 스냅샷 |
+
+### EstimateSettings (단일 행 id=1)
+| 필드 | 타입 | 비고 |
+|---|---|---|
+| enabled | BOOLEAN | |
+| display_mode | ENUM | RANGE / SINGLE |
+| range_percent | INT | 범위 폭(±%) |
+| minimum_amount | BIGINT | nullable |
+| notice | VARCHAR | 고객 안내 문구 |
+
+### EstimateBaseRate
+| 필드 | 타입 | 비고 |
+|---|---|---|
+| category | ENUM | RESIDENTIAL / COMMERCIAL |
+| grade | ENUM | BASIC / STANDARD / PREMIUM |
+| price_per_pyeong | BIGINT | nullable = 미제공 |
+
+### EstimateOption
+| 필드 | 타입 | 비고 |
+|---|---|---|
+| name / description | VARCHAR | |
+| applies_to | ENUM | ALL / RESIDENTIAL / COMMERCIAL |
+| pricing_type | ENUM | PER_PYEONG / PER_UNIT / FIXED |
+| unit_price | BIGINT | 원 |
+| unit_label | VARCHAR | 개수형 단위 (예: 개) |
+| active | BOOLEAN | |
+| display_order | INT | |
 
 ### AdminUser
 | 필드 | 타입 | 비고 |
@@ -184,3 +233,4 @@
 |---|---|
 | 2026-05-16 | 초안 작성 |
 | 2026-05-16 | 디자인 레퍼런스(romentordesign.com) 반영, 메뉴 확정(Home/About/Project/Process/Contact/Blog/Instagram), Youtube/Press/Board 제외, Project를 주거/상업 2개 카테고리로 분리, Blog 관리 기능 추가, 반응형(모바일/태블릿/PC) 필수 명시 |
+| 2026-09-30 | Contact 예상 견적(A-5-1), 관리자 견적 설정(B-4-1), 문의 저장/관리 API 연결 |

@@ -1,6 +1,13 @@
 import { api, API_BASE } from "./client";
 import type {
+  AdminEstimateConfig,
   AdminInfo,
+  BaseRate,
+  EstimateOption,
+  EstimateOptionInput,
+  EstimateSettings,
+  InquiryDetail,
+  InquiryStatus,
   Category,
   PageResponse,
   PortfolioCreateInput,
@@ -93,6 +100,32 @@ export const adminApi = {
 
   deleteCategoryHero: (category: Category) =>
     api<SiteInfo>(`/api/admin/site-info/category-hero?category=${category}`, { method: "DELETE" }),
+
+  // estimate
+  getEstimateConfig: () => api<AdminEstimateConfig>("/api/admin/estimate"),
+
+  updateEstimateSettings: (input: EstimateSettings) =>
+    api<AdminEstimateConfig>("/api/admin/estimate/settings", { method: "PUT", body: input }),
+
+  updateEstimateRates: (rates: BaseRate[]) =>
+    api<AdminEstimateConfig>("/api/admin/estimate/rates", { method: "PUT", body: { rates } }),
+
+  createEstimateOption: (input: EstimateOptionInput) =>
+    api<EstimateOption>("/api/admin/estimate/options", { method: "POST", body: input }),
+
+  updateEstimateOption: (id: number, input: EstimateOptionInput) =>
+    api<EstimateOption>(`/api/admin/estimate/options/${id}`, { method: "PUT", body: input }),
+
+  deleteEstimateOption: (id: number) =>
+    api<void>(`/api/admin/estimate/options/${id}`, { method: "DELETE" }),
+
+  // inquiries
+  getInquiry: (id: number) => api<InquiryDetail>(`/api/admin/inquiries/${id}`),
+
+  updateInquiryStatus: (id: number, status: InquiryStatus) =>
+    api<InquiryDetail>(`/api/admin/inquiries/${id}/status`, { method: "PUT", body: { status } }),
+
+  deleteInquiry: (id: number) => api<void>(`/api/admin/inquiries/${id}`, { method: "DELETE" }),
 };
 
 export function imageSrc(url: string | null): string | null {

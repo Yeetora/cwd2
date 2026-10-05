@@ -76,6 +76,42 @@ class SiteInfoControllerTest {
     }
 
     @Test
+    void admin_update_persists_instagram_url_and_blank_clears_it() throws Exception {
+        Map<String, Object> body = new HashMap<>();
+        body.put("instagramUrl", "https://instagram.com/arty_interior");
+
+        mockMvc.perform(put("/api/admin/site-info")
+                        .cookie(sessionCookie)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.instagramUrl").value("https://instagram.com/arty_interior"));
+
+        mockMvc.perform(get("/api/site-info"))
+                .andExpect(jsonPath("$.instagramUrl").value("https://instagram.com/arty_interior"));
+
+        body.put("instagramUrl", "  ");
+        mockMvc.perform(put("/api/admin/site-info")
+                        .cookie(sessionCookie)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.instagramUrl").doesNotExist());
+    }
+
+    @Test
+    void admin_update_rejects_non_http_instagram_url() throws Exception {
+        Map<String, Object> body = new HashMap<>();
+        body.put("instagramUrl", "javascript:alert(1)");
+
+        mockMvc.perform(put("/api/admin/site-info")
+                        .cookie(sessionCookie)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void admin_update_requires_auth() throws Exception {
         mockMvc.perform(put("/api/admin/site-info")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -20,8 +20,6 @@ const NAV_ITEMS = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
-const INSTAGRAM_URL = "https://instagram.com/studio_chauda";
-
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(href + "/");
@@ -52,7 +50,7 @@ function NavLabel({ label, active }: { label: string; active: boolean }) {
   );
 }
 
-export default function Header() {
+export default function Header({ instagramUrl }: { instagramUrl: string | null }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [projectOpen, setProjectOpen] = useState(false);
@@ -154,14 +152,16 @@ export default function Header() {
               </Link>
             )
           )}
-          <a
-            href={INSTAGRAM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="transition-colors duration-300 hover:text-accent"
-          >
-            <NavLabel label="Instagram" active={false} />
-          </a>
+          {instagramUrl && (
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors duration-300 hover:text-accent"
+            >
+              <NavLabel label="Instagram" active={false} />
+            </a>
+          )}
         </nav>
 
         <button
@@ -238,14 +238,16 @@ export default function Header() {
                 </Link>
               )
             )}
-            <a
-              href={INSTAGRAM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border-b border-border-alt py-4"
-            >
-              Instagram
-            </a>
+            {instagramUrl && (
+              <a
+                href={instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="border-b border-border-alt py-4"
+              >
+                Instagram
+              </a>
+            )}
           </nav>
         </div>
       )}

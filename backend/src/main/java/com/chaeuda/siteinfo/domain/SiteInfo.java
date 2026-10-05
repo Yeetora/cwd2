@@ -32,6 +32,9 @@ public class SiteInfo {
     @Column(name = "business_hours", length = 200)
     private String businessHours;
 
+    @Column(name = "instagram_url", length = 500)
+    private String instagramUrl;
+
     @Column(name = "hero_image_path", length = 500)
     private String heroImagePath;
 
@@ -51,11 +54,13 @@ public class SiteInfo {
         return s;
     }
 
-    public void updateContact(String companyPhone, String companyEmail, String companyAddress, String businessHours) {
+    public void updateContact(String companyPhone, String companyEmail, String companyAddress, String businessHours,
+                              String instagramUrl) {
         this.companyPhone = companyPhone;
         this.companyEmail = companyEmail;
         this.companyAddress = companyAddress;
         this.businessHours = businessHours;
+        this.instagramUrl = instagramUrl;
         this.updatedAt = Instant.now();
     }
 

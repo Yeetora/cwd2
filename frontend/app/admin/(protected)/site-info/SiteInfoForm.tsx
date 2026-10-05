@@ -12,6 +12,7 @@ export default function SiteInfoForm({ initial }: { initial: SiteInfo | null }) 
   const [companyEmail, setCompanyEmail] = useState(initial?.companyEmail ?? "");
   const [companyAddress, setCompanyAddress] = useState(initial?.companyAddress ?? "");
   const [businessHours, setBusinessHours] = useState(initial?.businessHours ?? "");
+  const [instagramUrl, setInstagramUrl] = useState(initial?.instagramUrl ?? "");
   const [heroUrl, setHeroUrl] = useState<string | null>(initial?.heroImageUrl ?? null);
   const [residentialUrl, setResidentialUrl] = useState<string | null>(initial?.residentialHeroUrl ?? null);
   const [commercialUrl, setCommercialUrl] = useState<string | null>(initial?.commercialHeroUrl ?? null);
@@ -31,6 +32,7 @@ export default function SiteInfoForm({ initial }: { initial: SiteInfo | null }) 
         companyEmail: companyEmail.trim() || null,
         companyAddress: companyAddress.trim() || null,
         businessHours: businessHours.trim() || null,
+        instagramUrl: instagramUrl.trim() || null,
       });
       setHeroUrl(updated.heroImageUrl);
       setMsg("연락처 정보가 저장되었습니다.");
@@ -203,13 +205,23 @@ export default function SiteInfoForm({ initial }: { initial: SiteInfo | null }) 
       {/* ── 연락처 정보 ── */}
       <form onSubmit={onSubmitContact} className="bg-white border border-neutral-200 p-6 space-y-5">
         <h2 className="text-sm font-medium tracking-[0.2em] text-neutral-500 uppercase">
-          연락처 (Footer 표시)
+          연락처 · SNS
         </h2>
 
         <Field label="전화번호" value={companyPhone} onChange={setCompanyPhone} placeholder="02-1234-5678" />
         <Field label="이메일" value={companyEmail} onChange={setCompanyEmail} placeholder="hello@example.com" type="email" />
         <Field label="주소" value={companyAddress} onChange={setCompanyAddress} placeholder="서울시 ○○구 ○○로 ○○" />
         <Field label="운영시간" value={businessHours} onChange={setBusinessHours} placeholder="평일 10:00 - 18:00" />
+        <div>
+          <Field
+            label="Instagram 주소"
+            value={instagramUrl}
+            onChange={setInstagramUrl}
+            placeholder="https://instagram.com/계정이름"
+            type="url"
+          />
+          <p className="mt-1 text-xs text-neutral-500">상단 메뉴의 Instagram 링크로 쓰입니다. 비워 두면 메뉴에서 숨깁니다.</p>
+        </div>
 
         <div className="flex items-center gap-2">
           <button

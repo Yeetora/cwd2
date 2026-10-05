@@ -41,7 +41,8 @@ public class SiteInfoService {
                 emptyToNull(req.companyPhone()),
                 emptyToNull(req.companyEmail()),
                 emptyToNull(req.companyAddress()),
-                emptyToNull(req.businessHours())
+                emptyToNull(req.businessHours()),
+                emptyToNull(req.instagramUrl())
         );
         siteInfoRepository.save(siteInfo);
         return toResponse(siteInfo);
@@ -141,6 +142,7 @@ public class SiteInfoService {
                 s.getCompanyEmail(),
                 s.getCompanyAddress(),
                 s.getBusinessHours(),
+                s.getInstagramUrl(),
                 toUrl(s.getHeroImagePath()),
                 toUrl(s.getResidentialHeroPath()),
                 toUrl(s.getCommercialHeroPath())

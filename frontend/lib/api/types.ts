@@ -67,6 +67,7 @@ export type SiteInfo = {
   companyEmail: string | null;
   companyAddress: string | null;
   businessHours: string | null;
+  instagramUrl: string | null;
   heroImageUrl: string | null;
   residentialHeroUrl: string | null;
   commercialHeroUrl: string | null;
@@ -77,6 +78,7 @@ export type SiteInfoUpdateInput = {
   companyEmail: string | null;
   companyAddress: string | null;
   businessHours: string | null;
+  instagramUrl: string | null;
 };
 
 // ── 예상 견적 ──────────────────────────────────────

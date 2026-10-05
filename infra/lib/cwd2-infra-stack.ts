@@ -136,8 +136,10 @@ export class Cwd2InfraStack extends cdk.Stack {
       vpc: this.vpc,
       vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.SMALL),
-      machineImage: ec2.MachineImage.latestAmazonLinux2023({
-        cpuType: ec2.AmazonLinuxCpuType.ARM_64,
+      // AMI 고정: latestAmazonLinux2023()는 배포 시점의 최신 AMI로 해석돼, 새 AMI가 나오면
+      // 아무 변경 없는 배포에도 인스턴스가 교체(=DB 유실)된다. OS 업데이트는 이 값을 직접 올릴 때만.
+      machineImage: ec2.MachineImage.genericLinux({
+        'ap-northeast-2': 'ami-0aa00e1a65838ccde', // Amazon Linux 2023 arm64, 2026-10-05 교체 시점
       }),
       blockDevices: [
         {

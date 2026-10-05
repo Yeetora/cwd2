@@ -6,7 +6,8 @@ import { Cwd2CertStack } from '../lib/cwd2-cert-stack';
 const app = new cdk.App();
 
 const account = process.env.CDK_DEFAULT_ACCOUNT;
-const primaryRegion = process.env.CDK_DEFAULT_REGION ?? 'ap-northeast-2';
+// 서울 리전 고정: AWS 설정이 없는 CI에서는 CDK가 us-east-1로 가정해 고정 AMI(서울 전용)를 못 찾음
+const primaryRegion = 'ap-northeast-2';
 const domainName: string | undefined = app.node.tryGetContext('domainName') ?? 'arty-interior.co.kr';
 const hostedZoneId: string | undefined = app.node.tryGetContext('hostedZoneId');
 

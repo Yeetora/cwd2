@@ -7,8 +7,7 @@ const app = new cdk.App();
 
 const account = process.env.CDK_DEFAULT_ACCOUNT;
 const primaryRegion = process.env.CDK_DEFAULT_REGION ?? 'ap-northeast-2';
-// 두 번째 사이트라 기본 도메인 없음. 필요 시 -c domainName=example.com 로 지정.
-const domainName: string | undefined = app.node.tryGetContext('domainName');
+const domainName: string | undefined = app.node.tryGetContext('domainName') ?? 'arty-interior.co.kr';
 const hostedZoneId: string | undefined = app.node.tryGetContext('hostedZoneId');
 
 // 인증서 스택은 us-east-1 (CloudFront 요구사항).

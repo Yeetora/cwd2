@@ -4,7 +4,6 @@ import { publicApi } from "@/lib/api/public";
 import { imageSrc } from "@/lib/api/admin";
 import type { Category } from "@/lib/api/types";
 import { BRAND_EYEBROW, CATEGORY_COPY, CATEGORY_LABEL, CATEGORY_PATH } from "@/lib/portfolio";
-import PageBanner from "@/app/components/portfolio/PageBanner";
 import SectionHeader from "@/app/components/portfolio/SectionHeader";
 import FadeImage from "@/app/components/portfolio/FadeImage";
 
@@ -12,7 +11,6 @@ export const metadata: Metadata = { title: "Project" };
 
 export default async function ProjectIndexPage() {
   const siteInfo = await publicApi.getSiteInfo();
-  const bannerImage = imageSrc(siteInfo?.heroImageUrl ?? null) ?? "/hero-main.png";
   const cards: { category: Category; image: string | null }[] = [
     { category: "RESIDENTIAL", image: imageSrc(siteInfo?.residentialHeroUrl ?? null) },
     { category: "COMMERCIAL", image: imageSrc(siteInfo?.commercialHeroUrl ?? null) },
@@ -20,13 +18,6 @@ export default async function ProjectIndexPage() {
 
   return (
     <div>
-      <PageBanner
-        imageUrl={bannerImage}
-        title="PROJECT"
-        sub="Spaces We've Created"
-        crumbs={[{ label: "HOME", href: "/" }, { label: "PROJECT" }]}
-      />
-
       <section className="bg-portfolio-bg">
         <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
           <SectionHeader
@@ -50,7 +41,7 @@ export default async function ProjectIndexPage() {
                       className="absolute inset-0 h-full w-full object-cover group-hover:scale-[1.04]"
                     />
                   )}
-                  <div className="absolute inset-0 bg-portfolio-veil/55 transition-colors duration-500 group-hover:bg-portfolio-veil/25" />
+                  <div className="absolute inset-0 bg-portfolio-veil/70 transition-colors duration-500 group-hover:bg-portfolio-veil/40" />
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-portfolio-ink">
                     <span className="text-[11px] tracking-[0.3em] text-portfolio-accent">{CATEGORY_COPY[category].banner}</span>
                     <span className="mt-3 text-2xl font-light md:text-3xl">{CATEGORY_LABEL[category]}</span>

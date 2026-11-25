@@ -6,24 +6,30 @@ import { imageSrc } from "@/lib/api/admin";
 import type { PortfolioListItem } from "@/lib/api/types";
 import { cardMeta } from "@/lib/portfolio";
 import FadeImage from "./FadeImage";
+import ProjectModal from "./ProjectModal";
 
 /**
  * 흰 액자 + 사진만 깔끔하게. 이름은 마우스를 올리면(PC) / 처음 터치하면(모바일)
- * 테마색 막과 함께 나타나고, 모바일에선 한 번 더 터치해야 상세로 이동한다.
+ * 테마색 막과 함께 나타난다. 클릭(모바일은 두 번째 터치)하면 목록 위에 팝업으로 열린다.
  */
 export default function FramedPortfolioGrid({ items }: { items: PortfolioListItem[] }) {
   const [revealedId, setRevealedId] = useState<number | null>(null);
+  const [openId, setOpenId] = useState<number | null>(null);
   return (
-    <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
-      {items.map((item) => (
-        <FramedCard
-          key={item.id}
-          item={item}
-          revealed={revealedId === item.id}
-          onReveal={() => setRevealedId(item.id)}
-        />
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <FramedCard
+            key={item.id}
+            item={item}
+            revealed={revealedId === item.id}
+            onReveal={() => setRevealedId(item.id)}
+            onOpen={() => setOpenId(item.id)}
+          />
+        ))}
+      </div>
+      {openId !== null && <ProjectModal key={openId} id={openId} onClose={() => setOpenId(null)} />}
+    </>
   );
 }
 
@@ -31,21 +37,24 @@ function FramedCard({
   item,
   revealed,
   onReveal,
+  onOpen,
 }: {
   item: PortfolioListItem;
   revealed: boolean;
   onReveal: () => void;
+  onOpen: () => void;
 }) {
   const src = imageSrc(item.thumbnailUrl);
   const meta = cardMeta(item.location, item.areaSize);
 
   function onClick(e: React.MouseEvent) {
-    // 마우스 hover가 없는 기기(휴대폰·태블릿): 첫 터치는 이름만 보여주고 이동하지 않음
+    // Cmd/Ctrl/Shift 클릭은 브라우저 기본 동작(새 탭 등)으로 상세 페이지를 연다
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    // 마우스 hover가 없는 기기(휴대폰·태블릿): 첫 터치는 이름만 보여주고 팝업은 두 번째 터치에
     const touchOnly = window.matchMedia("(hover: none)").matches;
-    if (touchOnly && !revealed) {
-      e.preventDefault();
-      onReveal();
-    }
+    if (touchOnly && !revealed) onReveal();
+    else onOpen();
   }
 
   return (

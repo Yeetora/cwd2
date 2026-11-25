@@ -9,6 +9,10 @@
   --accent: #1a1a1a;
   --surface-alt: #eeece7;
   --border-alt: #ddd8ce;
+  /* 포트폴리오 목록 (어두운 섹션) */
+  --portfolio-bg: #2b2a28;
+  --portfolio-accent: #b5a68f;
+  --portfolio-frame: #eeece7;
 }
 
 @theme inline {
@@ -19,6 +23,9 @@
   --color-accent: var(--accent);
   --color-surface-alt: var(--surface-alt);
   --color-border-alt: var(--border-alt);
+  --color-portfolio-bg: var(--portfolio-bg);
+  --color-portfolio-accent: var(--portfolio-accent);
+  --color-portfolio-frame: var(--portfolio-frame);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

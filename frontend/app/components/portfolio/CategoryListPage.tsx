@@ -1,65 +1,126 @@
 import Link from "next/link";
 import { publicApi } from "@/lib/api/public";
+import { imageSrc } from "@/lib/api/admin";
 import type { Category } from "@/lib/api/types";
-import { CATEGORY_LABEL, CATEGORY_PATH } from "@/lib/portfolio";
-import PortfolioGrid from "./PortfolioGrid";
+import { BRAND_EYEBROW, CATEGORY_COPY, CATEGORY_LABEL, CATEGORY_PATH } from "@/lib/portfolio";
+import PageBanner from "./PageBanner";
+import DarkSectionHeader from "./DarkSectionHeader";
+import FramedPortfolioGrid from "./FramedPortfolioGrid";
 
 const PAGE_SIZE = 12;
 
 export default async function CategoryListPage({ category, page }: { category: Category; page: number }) {
-  const data = await publicApi.listPortfolios(category, page, PAGE_SIZE);
-  const other: Category = category === "RESIDENTIAL" ? "COMMERCIAL" : "RESIDENTIAL";
+  const [data, siteInfo] = await Promise.all([
+    publicApi.listPortfolios(category, page, PAGE_SIZE),
+    publicApi.getSiteInfo(),
+  ]);
+  const copy = CATEGORY_COPY[category];
+  const categoryHero = category === "RESIDENTIAL" ? siteInfo?.residentialHeroUrl : siteInfo?.commercialHeroUrl;
+  const bannerImage = imageSrc(categoryHero ?? siteInfo?.heroImageUrl ?? null) ?? "/hero-main.png";
 
   return (
-    <div className="mx-auto max-w-[1440px] px-5 py-20 md:px-10 md:py-28 lg:px-16">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <p className="text-xs tracking-[0.3em] text-muted">{category}</p>
-          <h1 className="mt-4 text-3xl font-light md:text-4xl">{CATEGORY_LABEL[category]}</h1>
-        </div>
-        <nav className="flex items-center gap-6 text-sm" aria-label="카테고리">
-          <span className="border-b border-foreground pb-1 text-foreground">{CATEGORY_LABEL[category]}</span>
-          <Link
-            href={CATEGORY_PATH[other]}
-            className="border-b border-transparent pb-1 text-muted transition-colors duration-300 hover:text-foreground"
-          >
-            {CATEGORY_LABEL[other]}
-          </Link>
-        </nav>
-      </div>
+    <div>
+      <PageBanner
+        imageUrl={bannerImage}
+        title={copy.banner}
+        sub={copy.sub}
+        crumbs={[{ label: "HOME", href: "/" }, { label: "PROJECT", href: "/project" }, { label: CATEGORY_LABEL[category] }]}
+      />
 
-      {!data || data.items.length === 0 ? (
-        <p className="mt-16 text-sm text-muted">등록된 포트폴리오가 없습니다.</p>
-      ) : (
-        <>
-          <div className="mt-14 md:mt-20">
-            <PortfolioGrid items={data.items} />
-          </div>
-          <Pagination base={CATEGORY_PATH[category]} current={data.page} totalPages={data.totalPages} />
-        </>
-      )}
+      <section className="bg-portfolio-bg">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+          <DarkSectionHeader eyebrow={`${BRAND_EYEBROW} · ${copy.banner}`} heading={copy.heading} tagline={copy.tagline}>
+            <CategoryTabs current={category} />
+          </DarkSectionHeader>
+
+          {!data || data.items.length === 0 ? (
+            <p className="mt-16 text-sm text-portfolio-frame/60">등록된 포트폴리오가 없습니다.</p>
+          ) : (
+            <>
+              <div className="mt-12 md:mt-16">
+                <FramedPortfolioGrid items={data.items} />
+              </div>
+              <Pagination base={CATEGORY_PATH[category]} current={data.page} totalPages={data.totalPages} />
+            </>
+          )}
+        </div>
+      </section>
     </div>
+  );
+}
+
+function CategoryTabs({ current }: { current: Category }) {
+  const cats: Category[] = ["RESIDENTIAL", "COMMERCIAL"];
+  return (
+    <nav className="flex items-center gap-8 text-sm" aria-label="카테고리">
+      {cats.map((c) => (
+        <Link
+          key={c}
+          href={CATEGORY_PATH[c]}
+          aria-current={c === current ? "page" : undefined}
+          className={
+            c === current
+              ? "border-b border-portfolio-accent pb-1 text-portfolio-frame"
+              : "border-b border-transparent pb-1 text-portfolio-frame/55 transition-colors hover:text-portfolio-frame"
+          }
+        >
+          {CATEGORY_LABEL[c]}
+        </Link>
+      ))}
+    </nav>
   );
 }
 
 function Pagination({ base, current, totalPages }: { base: string; current: number; totalPages: number }) {
   if (totalPages <= 1) return null;
+  const href = (i: number) => (i === 0 ? base : `${base}?page=${i}`);
   return (
-    <nav className="mt-20 flex items-center justify-center gap-6 text-sm text-muted" aria-label="페이지">
+    <nav className="mt-16 flex items-center justify-center gap-2 text-sm" aria-label="페이지">
+      <PageArrow href={href(Math.max(0, current - 1))} disabled={current === 0} label="이전 페이지">
+        ‹
+      </PageArrow>
       {Array.from({ length: totalPages }, (_, i) => (
         <Link
           key={i}
-          href={i === 0 ? base : `${base}?page=${i}`}
+          href={href(i)}
           aria-current={i === current ? "page" : undefined}
-          className={
+          className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
             i === current
-              ? "border-b border-foreground pb-1 text-foreground"
-              : "border-b border-transparent pb-1 transition-colors hover:text-foreground"
-          }
+              ? "bg-portfolio-accent font-medium text-portfolio-bg"
+              : "text-portfolio-frame/60 hover:text-portfolio-frame"
+          }`}
         >
-          {String(i + 1).padStart(2, "0")}
+          {i + 1}
         </Link>
       ))}
+      <PageArrow href={href(Math.min(totalPages - 1, current + 1))} disabled={current >= totalPages - 1} label="다음 페이지">
+        ›
+      </PageArrow>
     </nav>
+  );
+}
+
+function PageArrow({
+  href,
+  disabled,
+  label,
+  children,
+}: {
+  href: string;
+  disabled: boolean;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      aria-disabled={disabled}
+      className={`flex h-9 w-9 items-center justify-center text-lg text-portfolio-frame/60 ${
+        disabled ? "pointer-events-none opacity-30" : "hover:text-portfolio-frame"
+      }`}
+    >
+      {children}
+    </Link>
   );
 }

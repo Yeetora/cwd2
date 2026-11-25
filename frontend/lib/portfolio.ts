@@ -2,6 +2,25 @@ import type { Category } from "./api/types";
 
 const PYEONG_TO_M2 = 3.3058;
 
+/** 포트폴리오 섹션 상단 작은 영문 표기 (예: "CHAEUDA · RESIDENTIAL") */
+export const BRAND_EYEBROW = "ARTY";
+
+/** 카테고리별 배너·제목 문구 */
+export const CATEGORY_COPY: Record<Category, { banner: string; sub: string; heading: string; tagline: [string, string] }> = {
+  RESIDENTIAL: {
+    banner: "RESIDENTIAL",
+    sub: "Homes We've Shaped",
+    heading: "HOMES WE SHAPED",
+    tagline: ["머무는 사람의 일상에 맞춰 완성한", "주거 공간의 기록입니다."],
+  },
+  COMMERCIAL: {
+    banner: "COMMERCIAL",
+    sub: "Spaces We've Created",
+    heading: "SPACES WE CREATED",
+    tagline: ["브랜드의 분위기를 공간으로 옮긴", "상업 공간의 기록입니다."],
+  },
+};
+
 export const CATEGORY_LABEL: Record<Category, string> = {
   RESIDENTIAL: "주거공간",
   COMMERCIAL: "상업공간",

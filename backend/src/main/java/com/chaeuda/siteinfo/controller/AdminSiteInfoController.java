@@ -1,6 +1,7 @@
 package com.chaeuda.siteinfo.controller;
 
 import com.chaeuda.portfolio.domain.Category;
+import com.chaeuda.siteinfo.dto.SiteFontsUpdateRequest;
 import com.chaeuda.siteinfo.dto.SiteInfoResponse;
 import com.chaeuda.siteinfo.dto.SiteInfoUpdateRequest;
 import com.chaeuda.siteinfo.service.SiteInfoService;
@@ -36,6 +37,11 @@ public class AdminSiteInfoController {
     @DeleteMapping("/hero-image")
     public SiteInfoResponse deleteHero() {
         return siteInfoService.deleteHero();
+    }
+
+    @PutMapping("/fonts")
+    public SiteInfoResponse updateFonts(@RequestBody SiteFontsUpdateRequest request) {
+        return siteInfoService.updateFonts(request);
     }
 
     @PostMapping("/logo")

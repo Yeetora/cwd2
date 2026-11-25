@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { serverApiBase } from "@/lib/api/client";
 import type { SiteInfo } from "@/lib/api/types";
 import SiteInfoForm from "./SiteInfoForm";
+import FontSettings from "./FontSettings";
+import { BRAND_EYEBROW } from "@/lib/portfolio";
 
 export const metadata: Metadata = {
   title: "사이트 설정",
@@ -31,11 +33,18 @@ export default async function AdminSiteInfoPage() {
     <div>
       <h1 className="text-2xl font-light">사이트 설정</h1>
       <p className="mt-2 text-sm text-neutral-500">
-        Footer에 표시될 연락처 정보와 홈 화면 메인 배너 이미지를 관리합니다.
+        로고, 연락처, 메인 배너 이미지, 폰트를 관리합니다.
       </p>
 
       <div className="mt-8">
         <SiteInfoForm initial={siteInfo} />
+        <div className="mt-10 max-w-2xl">
+          <FontSettings
+            initialHeading={siteInfo?.fontHeading ?? null}
+            initialBody={siteInfo?.fontBody ?? null}
+            brand={BRAND_EYEBROW}
+          />
+        </div>
       </div>
     </div>
   );

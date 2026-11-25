@@ -88,6 +88,9 @@ export const adminApi = {
     return api<SiteInfo>("/api/admin/site-info/hero-image", { method: "POST", body: fd });
   },
 
+  updateFonts: (fontHeading: string | null, fontBody: string | null) =>
+    api<SiteInfo>("/api/admin/site-info/fonts", { method: "PUT", body: { fontHeading, fontBody } }),
+
   uploadLogo: (file: File) => {
     const fd = new FormData();
     fd.append("file", file);

@@ -9,6 +9,8 @@ public record SiteInfoResponse(
         String heroImageUrl,
         String residentialHeroUrl,
         String commercialHeroUrl,
-        String logoUrl
+        String logoUrl,
+        String fontHeading,
+        String fontBody
 ) {
 }

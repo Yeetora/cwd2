@@ -41,6 +41,12 @@ public class SiteInfo {
     @Column(name = "logo_path", length = 500)
     private String logoPath;
 
+    @Column(name = "font_heading", length = 40)
+    private String fontHeading;
+
+    @Column(name = "font_body", length = 40)
+    private String fontBody;
+
     @Column(name = "residential_hero_path", length = 500)
     private String residentialHeroPath;
 
@@ -64,6 +70,12 @@ public class SiteInfo {
         this.companyAddress = companyAddress;
         this.businessHours = businessHours;
         this.instagramUrl = instagramUrl;
+        this.updatedAt = Instant.now();
+    }
+
+    public void updateFonts(String fontHeading, String fontBody) {
+        this.fontHeading = fontHeading;
+        this.fontBody = fontBody;
         this.updatedAt = Instant.now();
     }
 

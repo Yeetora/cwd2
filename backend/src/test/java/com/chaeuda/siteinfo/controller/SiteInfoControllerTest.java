@@ -203,6 +203,43 @@ class SiteInfoControllerTest {
     }
 
     @Test
+    void fonts_update_is_public_and_blank_resets_to_default() throws Exception {
+        mockMvc.perform(put("/api/admin/site-info/fonts")
+                        .cookie(sessionCookie)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"fontHeading\":\"noto-serif-kr\",\"fontBody\":\"pretendard\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fontHeading").value("noto-serif-kr"))
+                .andExpect(jsonPath("$.fontBody").value("pretendard"));
+
+        mockMvc.perform(get("/api/site-info"))
+                .andExpect(jsonPath("$.fontHeading").value("noto-serif-kr"))
+                .andExpect(jsonPath("$.fontBody").value("pretendard"));
+
+        mockMvc.perform(put("/api/admin/site-info/fonts")
+                        .cookie(sessionCookie)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"fontHeading\":\"\",\"fontBody\":null}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fontHeading").doesNotExist())
+                .andExpect(jsonPath("$.fontBody").doesNotExist());
+    }
+
+    @Test
+    void fonts_update_rejects_unknown_font_and_requires_auth() throws Exception {
+        mockMvc.perform(put("/api/admin/site-info/fonts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"fontHeading\":\"pretendard\"}"))
+                .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(put("/api/admin/site-info/fonts")
+                        .cookie(sessionCookie)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"fontHeading\":\"comic-sans\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void logo_upload_shows_publicly_and_delete_clears_it() throws Exception {
         MockMultipartFile file = new MockMultipartFile(
                 "file", "logo.png", "image/png", new byte[]{1, 2, 3});

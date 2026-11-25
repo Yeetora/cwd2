@@ -50,3 +50,11 @@ body {
 * {
   box-sizing: border-box;
 }
+
+/* 관리자에서 고른 폰트 (공개 화면만, components/SiteFonts) */
+.site-fonts {
+  font-family: var(--site-font-body);
+}
+.site-fonts :is(h1, h2, h3, h4) {
+  font-family: var(--site-font-heading);
+}

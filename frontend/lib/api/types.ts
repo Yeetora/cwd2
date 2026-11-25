@@ -72,6 +72,8 @@ export type SiteInfo = {
   residentialHeroUrl: string | null;
   commercialHeroUrl: string | null;
   logoUrl: string | null;
+  fontHeading: string | null;
+  fontBody: string | null;
 };
 
 export type SiteInfoUpdateInput = {

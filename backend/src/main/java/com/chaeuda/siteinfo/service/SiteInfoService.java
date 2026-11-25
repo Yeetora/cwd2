@@ -6,6 +6,7 @@ import com.chaeuda.file.ImageValidator;
 import com.chaeuda.file.StoredFile;
 import com.chaeuda.portfolio.domain.Category;
 import com.chaeuda.siteinfo.domain.SiteInfo;
+import com.chaeuda.siteinfo.dto.SiteFontsUpdateRequest;
 import com.chaeuda.siteinfo.dto.SiteInfoResponse;
 import com.chaeuda.siteinfo.dto.SiteInfoUpdateRequest;
 import com.chaeuda.siteinfo.repository.SiteInfoRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -27,6 +29,11 @@ public class SiteInfoService {
     private static final String HERO_PREFIX = "site-info";
     private static final String CATEGORY_HERO_PREFIX = "site-info/category";
     private static final String LOGO_PREFIX = "site-info/logo";
+
+    /** 프런트 lib/fonts.ts의 폰트 키와 맞춰야 한다 */
+    static final Set<String> ALLOWED_FONTS = Set.of(
+            "pretendard", "noto-sans-kr", "ibm-plex-sans-kr", "nanum-gothic", "gowun-dodum",
+            "noto-serif-kr", "nanum-myeongjo", "gowun-batang", "hahmlet");
 
     private final SiteInfoRepository siteInfoRepository;
     private final ImageStorage imageStorage;
@@ -72,6 +79,25 @@ public class SiteInfoService {
             }
         }
         return toResponse(siteInfo);
+    }
+
+    @Transactional
+    public SiteInfoResponse updateFonts(SiteFontsUpdateRequest req) {
+        String heading = validFont(req.fontHeading());
+        String body = validFont(req.fontBody());
+        SiteInfo siteInfo = getOrInit();
+        siteInfo.updateFonts(heading, body);
+        siteInfoRepository.save(siteInfo);
+        return toResponse(siteInfo);
+    }
+
+    private static String validFont(String key) {
+        String k = emptyToNull(key);
+        if (k == null) return null;
+        if (!ALLOWED_FONTS.contains(k)) {
+            throw ApiException.badRequest("지원하지 않는 폰트입니다: " + k);
+        }
+        return k;
     }
 
     @Transactional
@@ -188,7 +214,9 @@ public class SiteInfoService {
                 toUrl(s.getHeroImagePath()),
                 toUrl(s.getResidentialHeroPath()),
                 toUrl(s.getCommercialHeroPath()),
-                toUrl(s.getLogoPath())
+                toUrl(s.getLogoPath()),
+                s.getFontHeading(),
+                s.getFontBody()
         );
     }
 

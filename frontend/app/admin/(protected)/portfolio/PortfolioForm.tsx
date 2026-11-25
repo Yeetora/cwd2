@@ -98,8 +98,12 @@ export default function PortfolioForm({ mode, initial }: Props) {
           maxLength={200}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          placeholder="광명 두산위브포레지움"
           className="input"
         />
+        <p className="mt-1 text-xs text-neutral-500">
+          지역 + 단지명 정도로 짧게. 평수는 아래 칸에 따로 적으면 화면에 자동으로 표시돼요 (제목에 &quot;/ 34py&quot;는 넣지 않기).
+        </p>
       </Field>
 
       <Field label="카테고리" required>
@@ -128,9 +132,10 @@ export default function PortfolioForm({ mode, initial }: Props) {
             type="text"
             value={areaSize}
             onChange={(e) => setAreaSize(e.target.value)}
-            placeholder="32평"
+            placeholder="32"
             className="input"
           />
+          <p className="mt-1 text-xs text-neutral-500">숫자만 적으면 &quot;32평&quot;, 상세에선 &quot;106㎡ (32평)&quot;로 표시</p>
         </Field>
         <Field label="공사기간">
           <input
@@ -145,11 +150,22 @@ export default function PortfolioForm({ mode, initial }: Props) {
 
       <Field label="설명">
         <textarea
-          rows={6}
+          rows={7}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          placeholder={DESCRIPTION_PLACEHOLDER}
           className="input"
         />
+        <details className="mt-2 text-xs text-neutral-500">
+          <summary className="cursor-pointer select-none">설명 작성 가이드</summary>
+          <ul className="mt-2 list-disc space-y-1 pl-5 leading-relaxed">
+            <li>3~5문장이면 충분해요. 첫 문장에 이 집의 한 가지 생각을 담아 주세요.</li>
+            <li>누구를 위한 공간인지 (예: 두 사람과 고양이 한 마리를 위한 34평)</li>
+            <li>무엇을 덜어내고 무엇을 남겼는지, 주로 쓴 재료와 색, 빛이 드는 방식</li>
+            <li>느낌표·이모지·&quot;대만족&quot; 같은 홍보 문구, 가격은 빼는 편이 고급스러워 보여요.</li>
+            <li>문단을 나누려면 빈 줄을 한 번 넣으세요.</li>
+          </ul>
+        </details>
       </Field>
 
       <label className="flex items-center gap-2 text-sm">
@@ -250,3 +266,10 @@ function Field({
     </div>
   );
 }
+
+const DESCRIPTION_PLACEHOLDER = `예)
+두 사람과 고양이 한 마리를 위한 34평.
+더하기보다 덜어내는 데 집중했습니다. 수납은 벽 안으로 넣고, 시선이 닿는 면은 비워 두었습니다.
+
+오크 원목과 석회 질감의 벽, 두 가지 재료로 전체를 정리했습니다.
+주방은 창 쪽으로 열어 아침 햇빛 아래에서 하루를 시작하도록 했습니다.`

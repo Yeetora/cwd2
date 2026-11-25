@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { publicApi } from "@/lib/api/public";
 import { imageSrc } from "@/lib/api/admin";
+import PortfolioGrid from "@/app/components/portfolio/PortfolioGrid";
 
 export default async function HomePage() {
   const [residential, commercial, siteInfo] = await Promise.all([
@@ -76,7 +77,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20 md:px-8">
+      <section className="mx-auto max-w-[1440px] px-5 py-20 md:px-10 md:py-28 lg:px-16">
         <div className="flex items-end justify-between">
           <h2 className="text-2xl font-light md:text-3xl">Featured Projects</h2>
           <Link href="/project" className="text-sm text-muted hover:text-foreground">
@@ -87,31 +88,8 @@ export default async function HomePage() {
         {featured.length === 0 ? (
           <p className="mt-8 text-sm text-muted">아직 등록된 프로젝트가 없습니다.</p>
         ) : (
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {featured.map((item) => (
-              <Link key={item.id} href={`/project/${item.id}`} className="group block w-4/5 mx-auto">
-                <div className="aspect-[4/3] bg-neutral-100 overflow-hidden">
-                  {item.thumbnailUrl ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={imageSrc(item.thumbnailUrl) ?? ""}
-                      alt={item.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-muted text-sm">
-                      이미지 없음
-                    </div>
-                  )}
-                </div>
-                <div className="mt-3 flex items-baseline justify-between gap-3">
-                  <div className="text-sm font-medium">{item.title}</div>
-                  <div className="text-xs text-muted">
-                    {[item.areaSize, item.location].filter(Boolean).join(" · ")}
-                  </div>
-                </div>
-              </Link>
-            ))}
+          <div className="mt-10 md:mt-14">
+            <PortfolioGrid items={featured} />
           </div>
         )}
       </section>

@@ -236,3 +236,4 @@
 | 2026-05-16 | 디자인 레퍼런스(romentordesign.com) 반영, 메뉴 확정(Home/About/Project/Process/Contact/Blog/Instagram), Youtube/Press/Board 제외, Project를 주거/상업 2개 카테고리로 분리, Blog 관리 기능 추가, 반응형(모바일/태블릿/PC) 필수 명시 |
 | 2026-09-30 | Contact 예상 견적(A-5-1), 관리자 견적 설정(B-4-1), 문의 저장/관리 API 연결 |
 | 2026-10-05 | Instagram 링크를 관리자 사이트 설정에서 변경 가능하게 (A-7) |
+| 2026-11-18 | 관리자 사이트 설정에 로고 업로드(헤더·푸터·관리자), 모바일에서 메인 배너를 글자 위에 잘리지 않게 표시, 한글 단어 단위 줄바꿈 |

@@ -38,6 +38,16 @@ public class AdminSiteInfoController {
         return siteInfoService.deleteHero();
     }
 
+    @PostMapping("/logo")
+    public SiteInfoResponse uploadLogo(@RequestParam("file") MultipartFile file) throws IOException {
+        return siteInfoService.uploadLogo(file);
+    }
+
+    @DeleteMapping("/logo")
+    public SiteInfoResponse deleteLogo() {
+        return siteInfoService.deleteLogo();
+    }
+
     @PostMapping("/category-hero")
     public SiteInfoResponse uploadCategoryHero(
             @RequestParam("category") Category category,

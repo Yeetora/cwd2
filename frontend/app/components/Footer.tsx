@@ -1,4 +1,4 @@
-import Image from "next/image";
+import SiteLogo from "./SiteLogo";
 import Link from "next/link";
 import { publicApi } from "@/lib/api/public";
 
@@ -15,12 +15,10 @@ export default async function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-8">
         <div className="grid gap-8 md:grid-cols-3">
           <div>
-            <Image
-              src="/logo.png"
-              alt="ARTY INTERIOR"
-              width={1606}
-              height={414}
-              className="h-8 w-auto"
+            <SiteLogo
+              logoUrl={siteInfo?.logoUrl}
+              defaultClassName="h-8 w-auto"
+              uploadedClassName="h-8"
             />
           </div>
 

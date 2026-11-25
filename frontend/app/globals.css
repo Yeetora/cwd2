@@ -30,6 +30,9 @@ body {
   font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
     "Pretendard", "Noto Sans KR", sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* 한글이 음절 중간에서 줄바꿈되지 않도록 (예: "디자/인") */
+  word-break: keep-all;
+  overflow-wrap: break-word;
   -moz-osx-font-smoothing: grayscale;
 }
 

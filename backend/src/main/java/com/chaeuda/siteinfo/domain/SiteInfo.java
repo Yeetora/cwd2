@@ -38,6 +38,9 @@ public class SiteInfo {
     @Column(name = "hero_image_path", length = 500)
     private String heroImagePath;
 
+    @Column(name = "logo_path", length = 500)
+    private String logoPath;
+
     @Column(name = "residential_hero_path", length = 500)
     private String residentialHeroPath;
 
@@ -61,6 +64,11 @@ public class SiteInfo {
         this.companyAddress = companyAddress;
         this.businessHours = businessHours;
         this.instagramUrl = instagramUrl;
+        this.updatedAt = Instant.now();
+    }
+
+    public void updateLogoPath(String path) {
+        this.logoPath = path;
         this.updatedAt = Instant.now();
     }
 

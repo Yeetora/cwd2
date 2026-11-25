@@ -12,7 +12,7 @@ export default async function PublicLayout({
 
   return (
     <>
-      <Header instagramUrl={siteInfo?.instagramUrl ?? null} />
+      <Header instagramUrl={siteInfo?.instagramUrl ?? null} logoUrl={siteInfo?.logoUrl ?? null} />
       <main className="flex-1">{children}</main>
       <Footer />
       <TopButton />

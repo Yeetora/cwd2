@@ -203,6 +203,36 @@ class SiteInfoControllerTest {
     }
 
     @Test
+    void logo_upload_shows_publicly_and_delete_clears_it() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "logo.png", "image/png", new byte[]{1, 2, 3});
+
+        mockMvc.perform(multipart("/api/admin/site-info/logo").file(file).cookie(sessionCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.logoUrl").isString());
+
+        mockMvc.perform(get("/api/site-info"))
+                .andExpect(jsonPath("$.logoUrl").isString());
+
+        mockMvc.perform(delete("/api/admin/site-info/logo").cookie(sessionCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.logoUrl").doesNotExist());
+
+        mockMvc.perform(delete("/api/admin/site-info/logo").cookie(sessionCookie))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void logo_requires_auth_and_valid_image() throws Exception {
+        mockMvc.perform(post("/api/admin/site-info/logo")).andExpect(status().isUnauthorized());
+        mockMvc.perform(delete("/api/admin/site-info/logo")).andExpect(status().isUnauthorized());
+
+        MockMultipartFile gif = new MockMultipartFile("file", "logo.gif", "image/gif", new byte[]{1});
+        mockMvc.perform(multipart("/api/admin/site-info/logo").file(gif).cookie(sessionCookie))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void admin_delete_hero_when_none_returns_400() throws Exception {
         mockMvc.perform(delete("/api/admin/site-info/hero-image").cookie(sessionCookie))
                 .andExpect(status().isBadRequest());

@@ -26,6 +26,7 @@ public class SiteInfoService {
 
     private static final String HERO_PREFIX = "site-info";
     private static final String CATEGORY_HERO_PREFIX = "site-info/category";
+    private static final String LOGO_PREFIX = "site-info/logo";
 
     private final SiteInfoRepository siteInfoRepository;
     private final ImageStorage imageStorage;
@@ -69,6 +70,47 @@ public class SiteInfoService {
             } catch (Exception e) {
                 log.warn("Failed to delete previous hero image '{}': {}", oldPath, e.getMessage());
             }
+        }
+        return toResponse(siteInfo);
+    }
+
+    @Transactional
+    public SiteInfoResponse uploadLogo(MultipartFile file) throws IOException {
+        ImageValidator.validate(file);
+        SiteInfo siteInfo = getOrInit();
+
+        String oldPath = siteInfo.getLogoPath();
+
+        StoredFile stored;
+        try (InputStream in = file.getInputStream()) {
+            stored = imageStorage.store(in, file.getOriginalFilename(), LOGO_PREFIX);
+        }
+        siteInfo.updateLogoPath(stored.filePath());
+        siteInfoRepository.save(siteInfo);
+
+        if (oldPath != null && !oldPath.isBlank()) {
+            try {
+                imageStorage.delete(oldPath);
+            } catch (Exception e) {
+                log.warn("Failed to delete previous logo '{}': {}", oldPath, e.getMessage());
+            }
+        }
+        return toResponse(siteInfo);
+    }
+
+    @Transactional
+    public SiteInfoResponse deleteLogo() {
+        SiteInfo siteInfo = getOrInit();
+        String path = siteInfo.getLogoPath();
+        if (path == null) {
+            throw ApiException.badRequest("로고가 설정되어 있지 않습니다");
+        }
+        siteInfo.updateLogoPath(null);
+        siteInfoRepository.save(siteInfo);
+        try {
+            imageStorage.delete(path);
+        } catch (Exception e) {
+            log.warn("Failed to delete logo '{}': {}", path, e.getMessage());
         }
         return toResponse(siteInfo);
     }
@@ -145,7 +187,8 @@ public class SiteInfoService {
                 s.getInstagramUrl(),
                 toUrl(s.getHeroImagePath()),
                 toUrl(s.getResidentialHeroPath()),
-                toUrl(s.getCommercialHeroPath())
+                toUrl(s.getCommercialHeroPath()),
+                toUrl(s.getLogoPath())
         );
     }
 

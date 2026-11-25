@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { AdminInfo } from "@/lib/api/types";
 import { adminApi } from "@/lib/api/admin";
+import SiteLogo from "@/app/components/SiteLogo";
 
 const NAV = [
   { label: "대시보드", href: "/admin" },
@@ -14,7 +14,7 @@ const NAV = [
   { label: "문의", href: "/admin/inquiries" },
 ];
 
-export default function AdminTopbar({ me }: { me: AdminInfo }) {
+export default function AdminTopbar({ me, logoUrl }: { me: AdminInfo; logoUrl: string | null }) {
   const router = useRouter();
 
   async function onLogout() {
@@ -31,13 +31,11 @@ export default function AdminTopbar({ me }: { me: AdminInfo }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 md:px-8">
         <div className="flex items-center gap-6">
           <Link href="/admin" className="flex items-center gap-2" aria-label="ADMIN 대시보드">
-            <Image
-              src="/logo.png"
-              alt="ARTY INTERIOR"
-              width={1606}
-              height={414}
+            <SiteLogo
+              logoUrl={logoUrl}
               priority
-              className="h-[22px] w-auto"
+              defaultClassName="h-[22px] w-auto"
+              uploadedClassName="h-[22px]"
             />
             <span className="text-xs tracking-[0.2em] text-neutral-500">ADMIN</span>
           </Link>

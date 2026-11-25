@@ -14,6 +14,7 @@ export default function SiteInfoForm({ initial }: { initial: SiteInfo | null }) 
   const [businessHours, setBusinessHours] = useState(initial?.businessHours ?? "");
   const [instagramUrl, setInstagramUrl] = useState(initial?.instagramUrl ?? "");
   const [heroUrl, setHeroUrl] = useState<string | null>(initial?.heroImageUrl ?? null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(initial?.logoUrl ?? null);
   const [residentialUrl, setResidentialUrl] = useState<string | null>(initial?.residentialHeroUrl ?? null);
   const [commercialUrl, setCommercialUrl] = useState<string | null>(initial?.commercialHeroUrl ?? null);
   const [busy, setBusy] = useState(false);
@@ -80,6 +81,42 @@ export default function SiteInfoForm({ initial }: { initial: SiteInfo | null }) 
     }
   }
 
+  async function onUploadLogo(e: React.ChangeEvent<HTMLInputElement>) {
+    setError(null);
+    setMsg(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBusy(true);
+    try {
+      const updated = await adminApi.uploadLogo(file);
+      setLogoUrl(updated.logoUrl);
+      setMsg("로고가 업데이트되었습니다.");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "업로드 실패");
+    } finally {
+      setBusy(false);
+      e.target.value = "";
+    }
+  }
+
+  async function onDeleteLogo() {
+    if (!confirm("업로드한 로고를 삭제하고 기본 로고로 되돌리시겠습니까?")) return;
+    setError(null);
+    setMsg(null);
+    setBusy(true);
+    try {
+      const updated = await adminApi.deleteLogo();
+      setLogoUrl(updated.logoUrl);
+      setMsg("기본 로고로 되돌렸습니다.");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "삭제 실패");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function onUploadCategory(category: Category, e: React.ChangeEvent<HTMLInputElement>) {
     setError(null);
     setMsg(null);
@@ -120,13 +157,56 @@ export default function SiteInfoForm({ initial }: { initial: SiteInfo | null }) 
 
   return (
     <div className="space-y-10 max-w-2xl">
+      {/* ── 로고 ── */}
+      <section className="bg-white border border-neutral-200 p-6">
+        <h2 className="text-sm font-medium tracking-[0.2em] text-neutral-500 uppercase">
+          로고
+        </h2>
+        <p className="mt-1 text-xs text-neutral-500">
+          상단 메뉴·푸터·관리자 화면에 표시됩니다. 배경이 투명하고 주변 여백을 잘라낸 가로형 PNG를 권장합니다.
+          업로드하지 않으면 기본 로고가 쓰입니다.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-4">
+          <div className="flex h-24 w-56 items-center justify-center border border-neutral-200 bg-surface-alt p-3">
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={imageSrc(logoUrl) ?? ""} alt="현재 로고" className="max-h-full max-w-full object-contain" />
+            ) : (
+              <span className="text-xs text-neutral-500">기본 로고 사용 중</span>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <label className="border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-100 cursor-pointer">
+              {logoUrl ? "교체" : "로고 업로드"}
+              <input
+                type="file"
+                accept="image/png,image/webp,image/jpeg"
+                onChange={onUploadLogo}
+                disabled={busy}
+                className="hidden"
+              />
+            </label>
+            {logoUrl && (
+              <button
+                onClick={onDeleteLogo}
+                disabled={busy}
+                className="border border-red-300 text-red-600 px-4 py-2 text-sm hover:bg-red-50 disabled:opacity-50"
+              >
+                기본 로고로
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* ── 히어로 이미지 ── */}
       <section className="bg-white border border-neutral-200 p-6">
         <h2 className="text-sm font-medium tracking-[0.2em] text-neutral-500 uppercase">
           홈 메인 배너 (Hero)
         </h2>
         <p className="mt-1 text-xs text-neutral-500">
-          홈 페이지 최상단에 노출되는 이미지. 권장 비율 2.5:1 (예: 1920×768).
+          홈 페이지 최상단에 노출되는 이미지 (인테리어 사진 권장). 권장 비율 2.5:1 (예: 1920×768).
+          PC에서는 글자 뒤 배경으로, 모바일에서는 글자 위에 잘리지 않게 표시됩니다.
         </p>
 
         <div className="mt-4">

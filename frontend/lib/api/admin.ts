@@ -88,6 +88,14 @@ export const adminApi = {
     return api<SiteInfo>("/api/admin/site-info/hero-image", { method: "POST", body: fd });
   },
 
+  uploadLogo: (file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return api<SiteInfo>("/api/admin/site-info/logo", { method: "POST", body: fd });
+  },
+
+  deleteLogo: () => api<SiteInfo>("/api/admin/site-info/logo", { method: "DELETE" }),
+
   deleteHeroImage: () =>
     api<SiteInfo>("/api/admin/site-info/hero-image", { method: "DELETE" }),
 

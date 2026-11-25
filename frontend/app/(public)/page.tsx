@@ -22,20 +22,24 @@ export default async function HomePage() {
     <div>
       <section className="relative overflow-hidden bg-surface-alt">
         {/* 동적 히어로 이미지: 관리자 페이지에서 업로드한 이미지가 있으면 사용. */}
+        {/* 모바일: 세로로 긴 화면에서 잘리거나 글자와 겹치지 않도록 이미지 전체를 글자 위에 표시 */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={heroSrc} alt="" className="block h-auto w-full md:hidden" />
+        {/* PC·태블릿: 글자 뒤 배경 */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={heroSrc}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 hidden h-full w-full object-cover md:block"
         />
-        {/* 상단: 헤더(베이지)에서 이미지로 자연스럽게 페이드 */}
-        <div className="absolute inset-x-0 top-0 h-56 md:h-72 bg-gradient-to-b from-surface-alt via-surface-alt/60 to-transparent" />
-        {/* 좌측: 텍스트 가독성을 위한 옅은 베이지 스크림 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-surface-alt/50 via-surface-alt/10 to-transparent" />
+        {/* 상단: 헤더에서 이미지로 자연스럽게 페이드 */}
+        <div className="absolute inset-x-0 top-0 hidden h-72 bg-gradient-to-b from-surface-alt via-surface-alt/60 to-transparent md:block" />
+        {/* 좌측: 텍스트 가독성을 위한 옅은 스크림 */}
+        <div className="absolute inset-0 hidden bg-gradient-to-r from-surface-alt/50 via-surface-alt/10 to-transparent md:block" />
         {/* 하단: 본문(흰색)으로 페이드 */}
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white" />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-32 md:px-8 md:py-56">
+        <div className="relative mx-auto max-w-7xl px-4 pt-12 pb-24 md:px-8 md:py-56">
           <p className="text-xs font-medium tracking-[0.3em] text-foreground/70 [text-shadow:0_1px_2px_rgba(238,236,231,0.6)]">
             SPACE, CRAFTED AS ART
           </p>

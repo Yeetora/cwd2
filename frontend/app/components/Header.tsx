@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import SiteLogo from "./SiteLogo";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
@@ -50,7 +50,13 @@ function NavLabel({ label, active }: { label: string; active: boolean }) {
   );
 }
 
-export default function Header({ instagramUrl }: { instagramUrl: string | null }) {
+export default function Header({
+  instagramUrl,
+  logoUrl,
+}: {
+  instagramUrl: string | null;
+  logoUrl: string | null;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [projectOpen, setProjectOpen] = useState(false);
@@ -105,14 +111,12 @@ export default function Header({ instagramUrl }: { instagramUrl: string | null }
       }`}
     >
       <div className="mx-auto flex h-28 max-w-7xl items-center justify-between px-4 md:h-40 md:px-8">
-        <Link href="/" className="flex items-center" aria-label="ARTY INTERIOR 홈으로">
-          <Image
-            src="/logo.png"
-            alt="ARTY INTERIOR"
-            width={1606}
-            height={414}
+        <Link href="/" className="flex min-w-0 max-w-[70%] items-center md:max-w-none" aria-label="ARTY INTERIOR 홈으로">
+          <SiteLogo
+            logoUrl={logoUrl}
             priority
-            className="h-8 w-auto md:h-[45px]"
+            defaultClassName="h-8 w-auto md:h-[45px]"
+            uploadedClassName="h-8 md:h-[45px]"
           />
         </Link>
 

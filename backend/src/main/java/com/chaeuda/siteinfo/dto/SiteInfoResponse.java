@@ -8,6 +8,7 @@ public record SiteInfoResponse(
         String instagramUrl,
         String heroImageUrl,
         String residentialHeroUrl,
-        String commercialHeroUrl
+        String commercialHeroUrl,
+        String logoUrl
 ) {
 }

@@ -4,7 +4,7 @@ import { imageSrc } from "@/lib/api/admin";
 import type { Category } from "@/lib/api/types";
 import { BRAND_EYEBROW, CATEGORY_COPY, CATEGORY_LABEL, CATEGORY_PATH } from "@/lib/portfolio";
 import PageBanner from "./PageBanner";
-import DarkSectionHeader from "./DarkSectionHeader";
+import SectionHeader from "./SectionHeader";
 import FramedPortfolioGrid from "./FramedPortfolioGrid";
 
 const PAGE_SIZE = 12;
@@ -29,12 +29,12 @@ export default async function CategoryListPage({ category, page }: { category: C
 
       <section className="bg-portfolio-bg">
         <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
-          <DarkSectionHeader eyebrow={`${BRAND_EYEBROW} · ${copy.banner}`} heading={copy.heading} tagline={copy.tagline}>
+          <SectionHeader eyebrow={`${BRAND_EYEBROW} · ${copy.banner}`} heading={copy.heading} tagline={copy.tagline}>
             <CategoryTabs current={category} />
-          </DarkSectionHeader>
+          </SectionHeader>
 
           {!data || data.items.length === 0 ? (
-            <p className="mt-16 text-sm text-portfolio-frame/60">등록된 포트폴리오가 없습니다.</p>
+            <p className="mt-16 text-sm text-portfolio-ink/60">등록된 포트폴리오가 없습니다.</p>
           ) : (
             <>
               <div className="mt-12 md:mt-16">
@@ -60,8 +60,8 @@ function CategoryTabs({ current }: { current: Category }) {
           aria-current={c === current ? "page" : undefined}
           className={
             c === current
-              ? "border-b border-portfolio-accent pb-1 text-portfolio-frame"
-              : "border-b border-transparent pb-1 text-portfolio-frame/55 transition-colors hover:text-portfolio-frame"
+              ? "border-b border-portfolio-accent pb-1 text-portfolio-ink"
+              : "border-b border-transparent pb-1 text-portfolio-ink/55 transition-colors hover:text-portfolio-ink"
           }
         >
           {CATEGORY_LABEL[c]}
@@ -86,8 +86,8 @@ function Pagination({ base, current, totalPages }: { base: string; current: numb
           aria-current={i === current ? "page" : undefined}
           className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
             i === current
-              ? "bg-portfolio-accent font-medium text-portfolio-bg"
-              : "text-portfolio-frame/60 hover:text-portfolio-frame"
+              ? "bg-portfolio-accent font-medium text-white"
+              : "text-portfolio-ink/60 hover:text-portfolio-ink"
           }`}
         >
           {i + 1}
@@ -116,8 +116,8 @@ function PageArrow({
       href={href}
       aria-label={label}
       aria-disabled={disabled}
-      className={`flex h-9 w-9 items-center justify-center text-lg text-portfolio-frame/60 ${
-        disabled ? "pointer-events-none opacity-30" : "hover:text-portfolio-frame"
+      className={`flex h-9 w-9 items-center justify-center text-lg text-portfolio-ink/60 ${
+        disabled ? "pointer-events-none opacity-30" : "hover:text-portfolio-ink"
       }`}
     >
       {children}

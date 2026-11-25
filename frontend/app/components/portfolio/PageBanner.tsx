@@ -1,7 +1,7 @@
 import Link from "next/link";
 import FadeImage from "./FadeImage";
 
-/** 사진 위 어두운 막 + 가운데 큰 영문 제목, 아래 경로 표시 */
+/** 사진 위 테마색 막 + 가운데 큰 영문 제목, 아래 경로 표시 */
 export default function PageBanner({
   imageUrl,
   title,
@@ -17,10 +17,10 @@ export default function PageBanner({
     <>
       <section className="relative h-[240px] overflow-hidden bg-portfolio-bg md:h-[420px]">
         <FadeImage src={imageUrl} alt="" eager className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="relative flex h-full flex-col items-center justify-center px-5 text-center text-white">
+        <div className="absolute inset-0 bg-portfolio-veil/65" />
+        <div className="relative flex h-full flex-col items-center justify-center px-5 text-center text-portfolio-ink">
           <h1 className="text-4xl font-light tracking-[0.06em] md:text-6xl">{title}</h1>
-          <p className="mt-3 text-sm tracking-[0.12em] text-white/80 md:text-base">{sub}</p>
+          <p className="mt-3 text-sm tracking-[0.12em] text-portfolio-ink/70 md:text-base">{sub}</p>
         </div>
       </section>
       <nav aria-label="현재 위치" className="border-b border-border bg-background">

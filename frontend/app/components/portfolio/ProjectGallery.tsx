@@ -79,12 +79,12 @@ export default function ProjectGallery({ images }: { images: GalleryImage[] }) {
 
   return (
     <>
-      <div className={`space-y-4 transition-opacity duration-500 md:space-y-6 ${ready ? "opacity-100" : "opacity-0"}`}>
+      <div className={`space-y-1.5 transition-opacity duration-500 ${ready ? "opacity-100" : "opacity-0"}`}>
         {rows.map((row, r) => {
           if (row.kind === "full") return <div key={r}>{photo(row.index)}</div>;
           if (row.kind === "pair") {
             return (
-              <div key={r} className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
+              <div key={r} className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                 {photo(row.indexes[0])}
                 {photo(row.indexes[1])}
               </div>
@@ -116,10 +116,12 @@ function Photo({
     <button
       type="button"
       onClick={() => onOpen(index)}
-      className="block w-full cursor-zoom-in bg-[#eeece8]"
+      className="group block w-full cursor-zoom-in border-[5px] border-portfolio-frame bg-portfolio-frame"
       aria-label={`사진 ${index + 1} 크게 보기`}
     >
-      <FadeImage src={image.src} alt={image.alt} className="block h-auto w-full" />
+      <span className="block overflow-hidden">
+        <FadeImage src={image.src} alt={image.alt} className="block h-auto w-full group-hover:scale-[1.02]" />
+      </span>
     </button>
   );
 }

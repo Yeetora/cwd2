@@ -3,8 +3,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { publicApi } from "@/lib/api/public";
 import { imageSrc } from "@/lib/api/admin";
-import { CATEGORY_LABEL, CATEGORY_PATH, formatAreaWithM2 } from "@/lib/portfolio";
-import FadeImage from "@/app/components/portfolio/FadeImage";
+import {
+  BRAND_EYEBROW,
+  CATEGORY_COPY,
+  CATEGORY_LABEL,
+  CATEGORY_PATH,
+  formatArea,
+  formatAreaWithM2,
+  shortLocation,
+} from "@/lib/portfolio";
+import PageBanner from "@/app/components/portfolio/PageBanner";
 import ProjectGallery, { type GalleryImage } from "@/app/components/portfolio/ProjectGallery";
 
 export const metadata: Metadata = { title: "프로젝트 상세 | Project" };
@@ -18,13 +26,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   if (!portfolio) notFound();
 
   const adjacent = await publicApi.getAdjacent(numericId, portfolio.category);
+  const copy = CATEGORY_COPY[portfolio.category];
 
-  // 대표 이미지를 맨 위 큰 사진으로, 나머지는 아래 갤러리로
+  // 배너는 대표 사진을 어둡게 깔아서 쓰고, 갤러리에는 대표 사진까지 모두 밝게 보여준다
   const hero = portfolio.images.find((img) => img.isThumbnail) ?? portfolio.images[0] ?? null;
-  const gallery: GalleryImage[] = portfolio.images
-    .filter((img) => img.id !== hero?.id)
-    .map((img) => ({ id: img.id, src: imageSrc(img.url) ?? "", alt: portfolio.title }));
-  const heroSrc = hero ? imageSrc(hero.url) : null;
+  const bannerImage = (hero && imageSrc(hero.url)) || "/hero-main.png";
+  const gallery: GalleryImage[] = [
+    ...(hero ? [hero] : []),
+    ...portfolio.images.filter((img) => img.id !== hero?.id),
+  ].map((img) => ({ id: img.id, src: imageSrc(img.url) ?? "", alt: portfolio.title }));
+
+  const subline = [shortLocation(portfolio.location), formatArea(portfolio.areaSize)].filter(Boolean).join(" · ");
 
   const facts = [
     { label: "유형", value: CATEGORY_LABEL[portfolio.category] },
@@ -33,94 +45,89 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     { label: "공사기간", value: portfolio.duration },
   ].filter((f): f is { label: string; value: string } => Boolean(f.value));
 
-  const container = "mx-auto max-w-[1440px] px-5 md:px-10 lg:px-16";
-
   return (
-    <article className="pb-24 md:pb-32">
-      <div className={`${container} pt-10 md:pt-14`}>
-        <Link
-          href={CATEGORY_PATH[portfolio.category]}
-          className="text-xs tracking-[0.2em] text-muted transition-colors hover:text-foreground"
-        >
-          ← {CATEGORY_LABEL[portfolio.category]}
-        </Link>
-      </div>
+    <div>
+      <PageBanner
+        imageUrl={bannerImage}
+        title={copy.banner}
+        sub={copy.sub}
+        crumbs={[
+          { label: "HOME", href: "/" },
+          { label: "PROJECT", href: "/project" },
+          { label: CATEGORY_LABEL[portfolio.category], href: CATEGORY_PATH[portfolio.category] },
+          { label: portfolio.title },
+        ]}
+      />
 
-      {heroSrc && (
-        <div className="mx-auto mt-6 max-w-[1440px] md:mt-8 md:px-10 lg:px-16">
-          <div className="relative aspect-[4/5] max-h-[90vh] w-full overflow-hidden bg-[#eeece8] md:aspect-[3/2]">
-            <FadeImage src={heroSrc} alt={portfolio.title} eager className="absolute inset-0 h-full w-full object-cover" />
-          </div>
-        </div>
-      )}
-
-      <header className={`${container} mt-14 md:mt-24`}>
-        <p className="text-xs tracking-[0.3em] text-muted">{portfolio.category}</p>
-        <h1 className="mt-4 max-w-4xl text-3xl font-light leading-tight md:text-[40px]">{portfolio.title}</h1>
-
-        <div className="mt-12 grid gap-12 md:mt-16 md:grid-cols-12 md:gap-10">
-          <dl
-            className={
-              portfolio.description
-                ? "grid grid-cols-2 gap-x-6 gap-y-6 md:col-span-4 md:grid-cols-1 lg:col-span-3"
-                : "grid grid-cols-2 gap-x-6 gap-y-6 md:col-span-12 md:grid-cols-4 lg:col-span-9"
-            }
-          >
-            {facts.map((f) => (
-              <div key={f.label}>
-                <dt className="text-xs tracking-[0.08em] text-muted">{f.label}</dt>
-                <dd className="mt-1.5 text-sm text-foreground">{f.value}</dd>
+      <section className="bg-portfolio-bg">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+          <header className="border-b border-portfolio-ink/15 pb-10 md:pb-14">
+            <p className="text-[11px] font-medium tracking-[0.25em] text-portfolio-accent md:text-xs">
+              {BRAND_EYEBROW} · {copy.banner}
+            </p>
+            <div className="mt-4 grid gap-10 md:grid-cols-12 md:gap-8">
+              <div className="md:col-span-7">
+                <h1 className="text-3xl font-light leading-tight text-portfolio-ink md:text-5xl">{portfolio.title}</h1>
+                {subline && <p className="mt-4 text-sm tracking-[0.08em] text-portfolio-ink/60">{subline}</p>}
               </div>
-            ))}
-          </dl>
-          {portfolio.description && (
-            <div className="md:col-span-8 lg:col-span-7 lg:col-start-5">
-              <p className="max-w-[38rem] whitespace-pre-line text-[15px] leading-[1.9] text-foreground/85 md:text-base">
+              <dl className="grid grid-cols-2 gap-x-6 gap-y-5 self-end md:col-span-5 md:col-start-8">
+                {facts.map((f) => (
+                  <div key={f.label}>
+                    <dt className="text-[11px] tracking-[0.12em] text-portfolio-ink/50">{f.label}</dt>
+                    <dd className="mt-1.5 text-sm text-portfolio-ink">{f.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+            {portfolio.description && (
+              <p className="mt-10 max-w-[40rem] whitespace-pre-line text-[15px] leading-[1.9] text-portfolio-ink/75 md:mt-14 md:text-base">
                 {portfolio.description}
               </p>
+            )}
+          </header>
+
+          {gallery.length > 0 ? (
+            <div className="mt-12 md:mt-16">
+              <ProjectGallery images={gallery} />
             </div>
+          ) : (
+            <p className="mt-12 text-sm text-portfolio-ink/60">사진이 아직 등록되지 않았습니다.</p>
           )}
-        </div>
-      </header>
 
-      {gallery.length > 0 && (
-        <section className={`${container} mt-20 md:mt-28`} aria-label="프로젝트 사진">
-          <ProjectGallery images={gallery} />
-        </section>
-      )}
-
-      <nav className={`${container} mt-28 md:mt-40`} aria-label="다른 프로젝트">
-        <div className="grid gap-10 border-t border-border pt-10 md:grid-cols-2 md:pt-14">
-          <div>
-            {adjacent?.previous && (
-              <Link href={`/project/${adjacent.previous.id}`} className="group block">
-                <span className="text-xs tracking-[0.2em] text-muted">← 이전 프로젝트</span>
-                <span className="mt-3 block text-lg font-light leading-snug transition-colors group-hover:text-muted md:text-2xl">
-                  {adjacent.previous.title}
-                </span>
+          <nav className="mt-20 border-t border-portfolio-ink/15 pt-10 md:mt-28 md:pt-14" aria-label="다른 프로젝트">
+            <div className="grid gap-10 md:grid-cols-2">
+              <div>
+                {adjacent?.previous && (
+                  <Link href={`/project/${adjacent.previous.id}`} className="group block">
+                    <span className="text-[11px] tracking-[0.25em] text-portfolio-accent">← PREV</span>
+                    <span className="mt-3 block text-lg font-light leading-snug text-portfolio-ink/80 transition-colors group-hover:text-portfolio-ink md:text-2xl">
+                      {adjacent.previous.title}
+                    </span>
+                  </Link>
+                )}
+              </div>
+              <div className="md:text-right">
+                {adjacent?.next && (
+                  <Link href={`/project/${adjacent.next.id}`} className="group block">
+                    <span className="text-[11px] tracking-[0.25em] text-portfolio-accent">NEXT →</span>
+                    <span className="mt-3 block text-lg font-light leading-snug text-portfolio-ink/80 transition-colors group-hover:text-portfolio-ink md:text-2xl">
+                      {adjacent.next.title}
+                    </span>
+                  </Link>
+                )}
+              </div>
+            </div>
+            <div className="mt-16 flex justify-center">
+              <Link
+                href={CATEGORY_PATH[portfolio.category]}
+                className="border border-portfolio-ink/30 px-8 py-3 text-sm tracking-[0.1em] text-portfolio-ink transition-colors hover:border-portfolio-accent hover:bg-portfolio-accent hover:text-white"
+              >
+                목록으로
               </Link>
-            )}
-          </div>
-          <div className="md:text-right">
-            {adjacent?.next && (
-              <Link href={`/project/${adjacent.next.id}`} className="group block">
-                <span className="text-xs tracking-[0.2em] text-muted">다음 프로젝트 →</span>
-                <span className="mt-3 block text-lg font-light leading-snug transition-colors group-hover:text-muted md:text-2xl">
-                  {adjacent.next.title}
-                </span>
-              </Link>
-            )}
-          </div>
+            </div>
+          </nav>
         </div>
-        <div className="mt-16 text-center">
-          <Link
-            href={CATEGORY_PATH[portfolio.category]}
-            className="border-b border-foreground/30 pb-1 text-sm text-muted transition-colors hover:border-foreground hover:text-foreground"
-          >
-            목록으로
-          </Link>
-        </div>
-      </nav>
-    </article>
+      </section>
+    </div>
   );
 }
